@@ -11,7 +11,8 @@ game.module(
 	'game.pile',
 	'game.refereepile',
 	'game.dice',
-	'game.chip'
+	'game.chip',
+	'game.cardmenu'
 )
 .body(function(){
 
@@ -24,6 +25,8 @@ var RefereePile = null;
 var chip = null;
 var dice = null;
 
+var gameround = null;
+
 game.createScene('WarmUp', {
 
 	Player_die1: 1,
@@ -32,14 +35,10 @@ game.createScene('WarmUp', {
 	AI_die2: 1,
 
 	PlayerIsHome: true,	// default to set player as home side
+	PlayerGetLastGoal: true,
+	PlayerLastPlay: true,
 
 	NoRound: 0,			// number of the game turn
-
-	// =================
-	/*	Values for HomeAway()
-	 */
-	//StartJudge: null,
-
 
 	// =================
 
@@ -52,7 +51,6 @@ game.createScene('WarmUp', {
 		/*
 		 * I'd like add a start button in the middle of the field
 		 */
-
 		this.NewGame();
 	},
 
@@ -152,6 +150,8 @@ game.createScene('WarmUp', {
 	},
 
 	HAResult: function(){
+		//this.Player_die1 = 1;
+		//this.AI_die1 = 2;
 		var self = this;
 
 		var Result = new game.BitmapText('You are Home Side!', {font: 'Foo'});
@@ -205,10 +205,255 @@ game.createScene('WarmUp', {
 		game.AI = new game.AI(!this.PlayerIsHome);
 		game.RefereePile = new game.RefereePile();
 		game.chip = new game.Chip();
+
+		//game.dice.reset();
+
+		this.PlayerGetLastGoal = !this.PlayerIsHome;
+
+		game.gameround = new game.GameRound(this.PlayerIsHome);
+		game.gameround.Rounding();
+		//this.GameRound();
+	},
+
+	// =======================================================
+	/* Recursively functional GameRound */
+	GameRound: function(){
+		if(game.Player.Score == 10 || game.AI.Score == 10 ||
+			game.Player.pile.IsEmpty() || game.AI.pile.IsEmpty() )
+		{
+			this.Winner();
+		}else{
+			game.Player.NewTurnInit();
+			game.AI.NewTurnInit();
+
+			this.KickOff();
+		}
 	},
 
 	KickOff: function(){
+		var self = this;
+		game.chip.resetchip(this.PlayerIsHome, this.PlayerGetLastGoal);
+		// dice roll
 
+		if(this.PlayerGetLastGoal)	{
+			// AI kickoff
+			this.PlayerLastPlay = false;
+			game.dice.setAiPosition();
+		}else{
+			//Player KickOff
+			this.PlayerLastPlay = true;
+			game.dice.setPlayerPosition();
+		}
+		
+		this.addTimer( 500, this.RollDueDice.bind(this) );
+	},
+
+	PlayerTurn: function(){
+		console.log('Player\'s Turn');
+		game.Player.ShowCardPick();
+		/*
+		if( game.Player.checkGoal() ){
+			this.PlayerGetLastGoal = true;
+			this.GameRound();
+		}else{
+			this.AITurn();
+		}*/
+	},
+
+	AITurn: function(){
+		console.log('AI\'s Turn');
+		game.AI.SmartPlay();
+		this.PlayerTurn();
+		/*
+		game.AI.SmartPlay();
+		if( game.AI.checkGoal() ){
+			this.PlayerGetLastGoal = false;
+			this.GameRound();
+		}else{
+			this.PlayerTurn();
+		}*/
+	},
+
+	Winner: function(){
+		if(game.Player.Score == 10 || game.Player.Score > game.AI.Score)
+			console.log('You Win!');
+		else if(game.AI.Score == 10 || game.AI.Score > game.Player.Score)
+			console.log('You Loser!');
+		else if(game.AI.Score == game.Player.Score)
+			console.log('平手');
+		else
+			console.log('Unknown Error for final Scores');
+
+		this.EndGame();
+	},
+
+	RollDueDice: function(){
+		var self = this;
+		game.dice.showdue();
+
+		this.addTimer(1000, this.StartRoll.bind(this) );
+	},
+
+	StartRoll: function(){
+		game.dice.roll();
+		this.addTimer( 1000, this.StopRoll.bind(this) );
+	},
+
+	StopRoll: function(){
+		game.dice.stopRoll();
+		console.log('Test stoproll');
+		this.addTimer( 500, this.Transit.bind(this) );
+	}, 
+
+	Transit: function(){
+		game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
+
+		this.addTimer(500, game.dice.hidedue.bind(game.dice) );
+
+		if(game.Player.checkGoal()){
+			console.log('Player Get Goal, Reset Ball, AI kickoff');
+			this.PlayerGetLastGoal = true;
+			this.GameRound();
+		}else if(game.AI.checkGoal()){
+			console.log('AI Get Goal, Reset Ball, Player kickoff');
+			this.PlayerGetLastGoal = false;
+			this.GameRound();
+		}else{
+			if(this.PlayerLastPlay){
+				this.AITurn();
+			}else{
+				this.PlayerTurn();
+			}
+		}
+
+	},
+
+	// =========================================================
+
+	EndGame: function(){
+
+	},
+
+	Test: function(){
+		console.log('Test');
+	}
+
+});
+
+game.createClass('GameRound', {
+
+	PlayerIsHome: true,
+	PlayerGetLastGoal: true,
+	PlayerLastPlay: true,
+
+	NoRound: 0,
+
+	init: function(PlayerIsHome){
+		this.PlayerIsHome = PlayerIsHome;
+		this.PlayerGetLastGoal = !PlayerIsHome;
+	},
+
+	EndGame: function(){
+
+	},
+
+	Winner: function() {
+		if(game.Player.Score == 10 || game.Player.Score > game.AI.Score)
+			console.log('You Win!');
+		else if(game.AI.Score == 10 || game.AI.Score > game.Player.Score)
+			console.log('You Loser!');
+		else if(game.AI.Score == game.Player.Score)
+			console.log('平手');
+		else
+			console.log('Unknown Error for final Scores');
+
+		this.EndGame();
+	},
+
+	Rounding: function() {
+		if(game.Player.Score == 10 || game.AI.Score == 10 ||
+			game.Player.pile.IsEmpty() || game.AI.pile.IsEmpty() )
+		{
+			this.Winner();
+		}else{
+			game.Player.NewTurnInit();
+			game.AI.NewTurnInit();
+
+			this.KickOff();
+		}
+	},
+
+	KickOff: function(){
+		var self = this;
+		game.chip.resetchip(this.PlayerIsHome, this.PlayerGetLastGoal);
+		// dice roll
+
+		if(this.PlayerGetLastGoal)	{
+			// AI kickoff
+			this.PlayerLastPlay = false;
+			game.dice.setAiPosition();
+		}else{
+			//Player KickOff
+			this.PlayerLastPlay = true;
+			game.dice.setPlayerPosition();
+		}
+		
+		game.scene.addTimer( 500, this.RollDueDice.bind(this) );
+	},
+
+	RollDueDice: function(){
+		var self = this;
+		game.dice.showdue();
+
+		game.scene.addTimer(1000, this.StartRoll.bind(this) );
+	},
+
+	StartRoll: function(){
+		game.dice.roll();
+		game.scene.addTimer( 1000, this.StopRoll.bind(this) );
+	},
+
+	StopRoll: function(){
+		game.dice.stopRoll();
+		console.log('Test stoproll');
+		game.scene.addTimer( 500, this.Transit.bind(this) );
+	}, 
+
+	Transit: function(){
+		game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
+
+		game.scene.addTimer(500, game.dice.hidedue.bind(game.dice) );
+
+
+
+		if(game.Player.checkGoal()){
+			console.log('Player Get Goal, Reset Ball, AI kickoff');
+			this.PlayerGetLastGoal = true;
+			this.GameRound();
+		}else if(game.AI.checkGoal()){
+			console.log('AI Get Goal, Reset Ball, Player kickoff');
+			this.PlayerGetLastGoal = false;
+			this.GameRound();
+		}else{
+			if(this.PlayerLastPlay){
+				this.AITurn();
+			}else{
+				this.PlayerTurn();
+			}
+		}
+
+	},
+
+	PlayerTurn: function(){
+		console.log('Player\'s Turn');
+		game.dice.setPlayerPosition();
+		game.Player.ShowCardPick();	
+	},
+
+	AITurn: function(){
+		console.log('AI\'s Turn');
+		game.dice.setAiPosition();
+		game.AI.SmartPlay();
 	}
 
 });

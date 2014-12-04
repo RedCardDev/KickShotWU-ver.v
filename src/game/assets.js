@@ -31,12 +31,36 @@ game.addAsset('images/dice6.png', 'dice6');
 
 game.addAsset('images/home_goal.png', "Goal_home");
 game.addAsset('images/computer_goal.png', "Goal_away");
-game.addAsset('images/block_home.gif', "GoalBlock_home");
-game.addAsset('images/block_away.gif', "GoalBlock_away");
+game.addAsset('images/left_block_home.gif', "LeftBlock_home");
+game.addAsset('images/left_block_away.gif', "LeftBlock_away");
+game.addAsset('images/right_block_home.png', "RightBlock_home");
+game.addAsset('images/right_block_away.png', "RightBlock_away");
 game.addAsset('images/intercept_home.gif', "Intercept_home");
 game.addAsset('images/intercept_away.gif', "Intercept_away");
-game.addAsset('images/shot_home.gif', "GoalShot_home");
-game.addAsset('images/shot_away.gif', "GoalShot_away");
+game.addAsset('images/left_shot_home.gif', "LeftShot_home");
+game.addAsset('images/left_shot_away.gif', "LeftShot_away");
+game.addAsset('images/right_shot_home.png', "RightShot_home");
+game.addAsset('images/right_shot_away.png', "RightShot_away");
+game.addAsset('images/pass_home.gif', 'Pass_home');
+game.addAsset('images/pass_away.gif', 'Pass_away');
+
+//Card Pick View
+game.addAsset('images/leftArrowButton.png','leftArrow');
+game.addAsset('images/rightArrowButton.png','rightArrow');
+game.addAsset('images/MainViewButtonTransparent.png', 'mainViewButton');
+game.addAsset('images/SkipButtonTransparent.png', 'skipButton');
+game.addAsset('images/tradeCardButtonTransparent.png', 'tradeButton');
+game.addAsset('images/UseCardButtonTransparent.png', 'useCardButton');
+game.addAsset('images/backButton.png', 'backButton');
+
+//Temp cards for card pick view
+
+game.addAsset('images/textbox.png','textbox');
+game.addAsset('images/blackSquare.png','blackSquare');
+
+
+// for other use
+game.addAsset('images/WildCard2.png', 'BlankCard');
 
 game.addAsset('fonts/foo.fnt');
 

@@ -35,6 +35,8 @@ game.createClass('Pile', {
 				console.log('Unknown pile type');
 				break;
 		}
+
+		this.Shuffle();
 	},
 
 	HomePile: function(c_gone){
@@ -144,10 +146,13 @@ game.createClass('Pile', {
 	},
 
 	NoCards: function(){
-		return this.NoPass+this.NoLeftShot+this.NoRightShot+this.NoIntercept+this.NoLeftBlock+this.NoRightBlock;
+		return this.cards.length;
+	},
+
+	IsEmpty: function(){
+		if(this.cards.length == 0)		return true;
+		else 							return false;
 	}
-
-
 
 });
 

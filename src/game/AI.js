@@ -72,6 +72,8 @@ game.createClass('AI', {
 			console.log('Cards['+i+']: '+ this.cards[i]);
 			this.pushHold(this.cards[i], i);
 		}
+
+		game.scene.addObject(this);
 		
 	},
 
@@ -267,7 +269,21 @@ game.createClass('AI', {
 	},
 
 	SmartPlay: function(){
-
+		if(this.currentOffence){
+			this.DealOffence();
+		}else{	// If AI is currently is Deffence
+			// check last card Player use, since in Deffence, only check 1,2,3 or 11,12,13, or null
+			if(game.Player.LastPick == null || game.Player.LastPick == 0 ||
+				game.Player.LastPick == 1 || game.Player.LastPick == 11){	
+				// if Player used pass card, or didnt use any card last turn
+				this.TryIntercept();
+			}else if((game.Player.LastPick == 2 || game.Player.LastPick == 3 ||
+					  game.Player.LastPick == 12 || game.Player.LastPick == 13) 
+						&& game.chip.chipzone == 11){ 
+			// if Player used leftshot card && reaches the end of zone
+				this.TryGoalBlock();
+			}
+		}
 	},
 
 	TradeCard: function(){
@@ -309,7 +325,7 @@ game.createClass('AI', {
 		console.log('AI Dealing Offence Phase');
 		var position = null;
 		var r = ~~Math.randomBetween(-5, 1);	
-		if(game.chip.chiplocation < r){
+		if(game.chip.chipzone < r){
 			/* if the chip is located randomly between this field,
 			 * check if hold shot cards
 			 * If so, store the position value and pop it from hold stack
@@ -371,7 +387,7 @@ game.createClass('AI', {
 				this.popHold(position);
 			}else if((this.cards[tmp_p] == 2 || this.cards[tmp_p] == 12 ||
 					  this.cards[tmp_p] == 3 || this.cards[tmp_p] == 13) 
-					  && game.chip.chiplocation < r)
+					  && game.chip.chipzone < r)
 			{
 				position = tmp_p;
 				this.popHold(position);
@@ -493,8 +509,95 @@ game.createClass('AI', {
 
 	},
 
-	useCard: function(){
+	useCard: function(position){
+		this.LastPick = this.cards[position];
 
+		var dice1 = ~~Math.randomBetween(1,7);
+		var dice2 = ~~Math.randomBetween(1,7);
+
+		switch(this.cards[position]){
+			case this.HomePass: case this.AwayPass:  // use pass card
+				game.chip.moveChip( Math.max(dice1, dice2) );
+				if(dice1 == 1 || dice2 == 1){
+					// roll of 1 on either dice, turn ball over
+					console.log('AI use pass card, but roll 1 on dice');
+					this.switchToDeffence();
+					game.Player.switchToOffence();
+					game.chip.TurnOver();
+				}else{
+					console.log('AI succeed to use pass card');
+					if(game.chip.chipzone == 11)
+						this.PassToGoal();
+				}
+				break;
+			case this.HomeLeftShot:  // use goal shot card 
+			case this.HomeRightShot:
+			case this.AwayLeftShot:
+			case this.AwayRightShot:
+				console.log('AI use GoalShot card');
+				game.chip.moveChip( (dice1+dice2) );
+				if(game.chip.chipzone < 11){
+					this.switchToDeffence();
+					game.Player.switchToOffence();
+					game.chip.TurnOver();
+					console.log('Ball not reach the end of zone');
+				}else{
+					/* if the chip did reach the end zone 
+					 * Draw a Referee Card
+					 */
+					this.DrawRefereeCard();
+					console.log(this.HoldReferee);
+					// so far, goal immediatly
+					//this.ShotToGoal();
+				}
+				// else will need to see if player hold the goalblock card
+				break;
+			case this.HomeIntercept: case this.AwayIntercept: // use intercept card
+				if(dice1 == 1 || dice2 == 1){
+					// roll of 1 on either dice will not succeed to intercept
+					console.log('AI use Intercept Card, but failed by rolling 1');
+				}else{
+					// succeed to intercept
+					this.switchToOffence();
+					game.Player.switchToDeffence();
+					game.chip.TurnOver();
+					console.log('AI succeed to use Intercept Card');
+				}
+				break;
+			case this.HomeLeftBlock:  // use goal block card 
+			case this.HomeRightBlock:
+			case this.AwayLeftBlock:
+			case this.AwayRightBlock:
+				console.log('AI use GoalBlock Card');
+				/*	Block the ball, turn it over 
+				 *	switch phase, kick the ball out
+				 */
+				game.chip.TurnOver();
+				game.AI.switchToOffence();
+				game.Player.switchToDeffence();
+
+				console.log('Kick back the ball after block');
+				game.chip.moveChip( (dice1+dice2) );
+
+				/*	Check if roll of 1 on either dice
+				 *	if so, turn the ball over
+				 */
+				if(dice1 == 1 || dice2 == 1){
+					game.chip.TurnOver();
+					game.AI.switchToDeffence();
+					game.Player.switchToOffence();
+				}
+				break;
+			default:
+				console.log('Error: Unknown card in useCard()');
+				break; 
+
+		}
+
+		// draw a new card after use and replace it at some position
+		this.DrawCard(position);
+
+		this.EndTurn();
 	},
 
 	useRefereeCard: function(){
@@ -525,7 +628,11 @@ game.createClass('AI', {
 
 	EndTurn: function(){
 		// need animation here
-		console.log('AI End Cureent Turn');
+		if(this.GoalThisTurn){
+			game.gameround.Rounding();
+		}else{
+			game.gameround.PlayerTurn();
+		}
 	}
 
 });

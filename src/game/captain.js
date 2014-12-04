@@ -32,23 +32,6 @@ game.createClass('Captain', {
 
 	cards: [],	// are we gonna create card classes to hold the values for use later?
 
-	/* this part is easy use to determine if AI hold this kind of card,
-	 * which will help to make the code much simple!!!!!!!!
-	 */
-	HoldReferee: [],
-	HoldHomePass: [],
-	HoldHomeLeftShot: [],
-	HoldHomeRightShot: [],
-	HoldHomeIntercept: [],
-	HoldHomeLeftBlock: [],
-	HoldHomeRightBlock: [],
-	HoldAwayPass: [],
-	HoldAwayLeftShot: [],
-	HoldAwayRightShot: [],
-	HoldAwayIntercept: [],
-	HoldAwayLeftBlock: [],
-	HoldAwayRightBlock: [],
-
 	LastPick: null,	// hold last card Player used
  	
  	GoalThisTurn: false,
@@ -70,6 +53,10 @@ game.createClass('Captain', {
 		for(var i = 0; i < this.cards.length; i++){
 			console.log('Cards['+i+']: '+ this.cards[i]);
 		}
+
+		this.cardmenu = new game.CardMenu(this.cards);
+
+		game.scene.addObject(this);
 		
 	},
 
@@ -113,14 +100,204 @@ game.createClass('Captain', {
 		this.currentOffence = false;
 	},
 
-	PlayerAuto: function(){
-		console.log('Player AutoPlay: do nothing');
-		
+	ShowCardPick: function(){
+		this.cardmenu.traded = false;
+		game.scene.addTimer(500, this.cardmenu.showMenu.bind(this.cardmenu) );
 	},
 
 	tradeCard: function(position){
+		this.cards[position] = null;
+		return this.DrawCard(position);	// then recover the card
+	},
+
+	DrawCard: function(position){
+		var type = this.pile.DrawCard();
+		this.cards[position] = type;
+
+		// testing
+			console.log();
+			console.log('Draw a new Card at: '+ position);
+			console.log('NewCard: '+ this.cards[position]);
+			console.log();
+		// testing
+			for(var i = 0; i < this.cards.length; i++){
+				console.log('Cards['+i+']: '+ this.cards[i]);
+			}
+		return type;
 
 	},
+
+	DrawRefereeCard: function(){
+
+	},
+
+	// =====================================
+	// function deal with use cards
+	UseCard: function(select){
+		switch(this.cards[select]){
+			case 1: case 11:
+				this.UsePass(select);
+				break;
+			case 2: case 3: case 12: case 13:
+				this.UseShot(select);
+				break;
+			case 4: case 14:
+				this.UseIntercept(select);
+				break;
+			case 5: case 15: 
+				this.UseLeftBlock(select);
+				break;
+			case 6: case 16: 
+				this.UseRightBlock(select);
+				break;
+			default:
+				console.log('Unknown cardType in UseCard- captain()');
+				break;
+		}
+	},
+
+	UsePass: function(select){
+		if(!this.currentOffence){
+			console.log('You are currently not in Offence! Not Able to use pass');
+			console.log('Try Another');
+		}else{
+			console.log('TestUsePass');
+			this.cardmenu.hideMenu();
+			this.RollDueDice(select);
+		}
+	},
+
+	PassOrShotFail: function(){
+		this.switchToDeffence();
+		game.AI.switchToOffence();
+		game.chip.TurnOver();
+		this.EndTurn();
+	},
+
+	UseShot: function(select){
+		if(!this.currentOffence){
+			console.log('You are currently not in Offence! Not Able to use shot');
+		}else{
+			console.log('TestUseShot');
+			this.cardmenu.hideMenu();
+			this.RollDueDice(select);
+		}
+	},
+
+	UseIntercept: function(select){
+		if(this.currentOffence){
+			console.log('You are currently in Offence! Not Able to use intercerpt');
+		}else{
+			this.cardmenu.hideMenu();
+			this.RollDueDice(select);
+		}
+	},
+
+	UseLeftBlock: function(select){
+		if(this.currentOffence){
+			console.log('You are currently in Offence! Not Able to use UseLeftBlock');
+		}else if(game.AI.LastPick != 2 || game.AI.LastPick != 12){
+			console.log('The Block Direction is not the same as AI shot direction!');
+		}else if(game.AI.LastPick == 2 || game.AI.LastPick == 12){
+			this.carmenu.hideMenu();
+			this.RollDueDice(select);
+		}else{
+			console.log('AI didn\'t use goal shot card, no need block');
+		}
+	},
+
+	UseRightBlock: function(select){
+		if(this.currentOffence){
+			console.log('You are currently in Offence! Not Able to use intercerpt');
+		}else if(game.AI.LastPick != 3 || game.AI.LastPick != 13){
+			console.log('The Block Direction is not the same as AI shot direction!');
+		}else if(game.AI.LastPick == 3 || game.AI.LastPick == 13){
+			this.carmenu.hideMenu();
+			this.RollDueDice(select);
+		}else{
+			console.log('AI didn\'t use goal shot card, no need block');
+		}
+	},
+
+	RollDueDice: function(i){
+		var self = this;
+		game.dice.showdue();
+
+		game.scene.addTimer(1000, this.StartRoll.bind(this, i) );
+	},
+
+	StartRoll: function(i){
+		game.dice.roll();
+		game.scene.addTimer( 1000, this.StopRoll.bind(this, i) );
+	},
+
+	StopRoll: function(i){
+		game.dice.stopRoll();
+		console.log('Test stoproll');
+		game.scene.addTimer( 500, this.Transit.bind(this, i) );
+	}, 
+
+	Transit: function(i){
+		game.dice.hidedue();
+		var self = this;
+		var die1 = game.dice.value1;
+		var die2 = game.dice.value2;
+		switch(this.cards[i]){
+			case 1: case 11:
+				game.chip.moveChip( Math.max(die1, die2) );
+				if(die1 == 1 || die2 == 1){
+					game.scene.addTimer(1000, this.PassOrShotFail.bind(this) );
+				}else{
+					if(game.chip.chipzone == -11){
+						this.PassToGoal();
+					}
+					this.EndTurn();					
+				}
+				break;
+			case 2: case 3: case 12: case 13:
+				game.chip.moveChip( (die1 + die2) );
+				if(game.chip.chipzone > -11){
+					game.scene.addTimer(1000, this.PassOrShotFail.bind(this) );
+				}else{
+					this.DrawRefereeCard();
+					this.EndTurn();
+				}
+				break;
+			case 4: case 14:
+				if( die1 == 1 || die2 == 2 ){
+					console.log( 'You fail intercerpt by rolling 1' );
+				}else{
+					this.switchToOffence();
+					game.AI.switchToDeffence();
+					game.chip.TurnOver();
+				}
+				this.EndTurn();
+				break;
+			case 5: case 6: case 15: case 16:
+				this.switchToOffence();
+				game.AI.switchToDeffence();
+				game.chip.TurnOver();
+
+				game.scene.addTimer( 500, function(){
+					game.chip.moveChip( (die1 + die2) );
+
+					if(die1 == 1 || die2 == 1){
+						game.scene.addTimer(1000, function(){
+							self.switchToDeffence();
+							game.AI.switchToOffence();
+							game.chip.TurnOver();
+							self.EndTurn();
+						});
+					}else{
+						game.scene.addTimer(1000, this.EndTurn.bind(this) );
+					}
+				});
+				break;
+
+		}
+
+	},
+	// ======================================
 
 	PassToGoal: function(){
 		console.log('Player Pass To Goal');
@@ -136,6 +313,14 @@ game.createClass('Captain', {
 
 	checkGoal: function(){
 		return this.GoalThisTurn;
+	},
+
+	EndTurn: function(){
+		if(this.GoalThisTurn){
+			game.gameround.Rounding();
+		}else{
+			game.gameround.AITurn();
+		}	
 	},
 
 	// once goaled and before kickoff, reset some value here
