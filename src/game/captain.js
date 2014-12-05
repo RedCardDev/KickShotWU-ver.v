@@ -37,19 +37,19 @@ game.createClass('Captain', {
  	GoalThisTurn: false,
  	LostGoalThisTurn: false,
 
- 	phase1: null,
+ 	phase: null,
 
 	init: function(HomeSide){
 		console.log('Current player side:' + HomeSide);
 		if(HomeSide){
 			this.Side = 'Home';
-			this.phase1 = new game.BitmapText('Offence', {font: 'Foo'});
+			this.phase = new game.BitmapText('Offence', {font: 'Foo'});
 			this.switchToOffence();
 			this.homeCaptain();
 			this.pile = new game.Pile('Home', this.cards);
 		}else{
 			this.Side = 'Away';
-			this.phase1 = new game.BitmapText('Defence', {font: 'Foo'});
+			this.phase = new game.BitmapText('Defence', {font: 'Foo'});
 			this.switchToDeffence();
 			this.awayCaptain();
 			this.pile = new game.Pile('Away', this.cards);
@@ -64,10 +64,10 @@ game.createClass('Captain', {
 		var text1 = new game.BitmapText(this.Side, {font: 'Foo'});
 		text1.position.set(10, 850);
 
-		this.phase1.position.set(450, 850);
+		this.phase.position.set(450, 850);
 
 		text1.addTo(game.scene.stage);
-		this.phase1.addTo(game.scene.stage);
+		this.phase.addTo(game.scene.stage);
 		game.scene.addObject(this);	
 	},
 
