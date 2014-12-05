@@ -37,6 +37,7 @@ game.createClass('Pile', {
 		}
 
 		this.Shuffle();
+		this.Shuffle();
 	},
 
 	HomePile: function(c_gone){
@@ -56,6 +57,7 @@ game.createClass('Pile', {
 					break;
 			}
 		}
+		/*
 		console.log('After taken away cards');
 		console.log(this.NoPass);
 		console.log(this.NoLeftShot);
@@ -63,6 +65,7 @@ game.createClass('Pile', {
 		console.log(this.NoIntercept);
 		console.log(this.NoLeftBlock);
 		console.log(this.NoRightBlock);
+		*/
 		/* 1. write down all the cards in order */
 		for(i = 0; i < this.NoPass; i++){
 			this.cards.push(1);
@@ -94,6 +97,7 @@ game.createClass('Pile', {
 					break;
 			}
 		}
+		/*
 		console.log('After taken away cards');
 		console.log(this.NoPass);
 		console.log(this.NoLeftShot);
@@ -101,6 +105,7 @@ game.createClass('Pile', {
 		console.log(this.NoIntercept);
 		console.log(this.NoLeftBlock);
 		console.log(this.NoRightBlock);
+		*/
 		/* 1. write down all the cards in order */
 		for(i = 0; i < this.NoPass; i++){
 			this.cards.push(11);
@@ -140,6 +145,7 @@ game.createClass('Pile', {
 			}
 			return cardtype;
 		}else{
+			console.log();
 			console.log('Pile is Empty now');
 			return null;
 		}

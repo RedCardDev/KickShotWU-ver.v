@@ -52,16 +52,21 @@ game.createClass('AI', {
 	LastPick: null,	// hold last card that AI used
 
 	GoalThisTurn: false,
+	LostGoalThisTurn: false,
+
+	phase: null,
 
 	init: function(HomeSide){
 		console.log('Current AI side:' + HomeSide);
 		if(HomeSide){
 			this.Side = 'Home';
+			this.phase = new game.BitmapText('Offence', {font: 'Foo'});
 			this.switchToOffence();
 			this.homeAI();
 			this.pile = new game.Pile('Home', this.cards);
 		}else{
 			this.Side = 'Away';
+			this.phase = new game.BitmapText('Defence', {font: 'Foo'});
 			this.switchToDeffence();
 			this.awayAI();
 			this.pile = new game.Pile('Away', this.cards);
@@ -73,6 +78,13 @@ game.createClass('AI', {
 			this.pushHold(this.cards[i], i);
 		}
 
+		var text1 = new game.BitmapText(this.Side, {font: 'Foo'});
+		text1.position.set(10, 10);
+
+		this.phase.position.set(450, 10);
+
+		text1.addTo(game.scene.stage);
+		this.phase.addTo(game.scene.stage);
 		game.scene.addObject(this);
 		
 	},
@@ -258,10 +270,12 @@ game.createClass('AI', {
 
 	switchToOffence: function(){
 		this.currentOffence = true;
+		this.phase.setText('Offence');
 	},
 
 	switchToDeffence: function(){
 		this.currentOffence = false;
+		this.phase.setText('Defence');
 	},
 
 	SmartTrade: function(){
@@ -274,12 +288,15 @@ game.createClass('AI', {
 		}else{	// If AI is currently is Deffence
 			// check last card Player use, since in Deffence, only check 1,2,3 or 11,12,13, or null
 			if(game.Player.LastPick == null || game.Player.LastPick == 0 ||
-				game.Player.LastPick == 1 || game.Player.LastPick == 11){	
+				game.Player.LastPick == 1 || game.Player.LastPick == 11 ||
+				game.Player.LastPick == 4 || gane.Player.LastPick == 14)
+			{	
 				// if Player used pass card, or didnt use any card last turn
 				this.TryIntercept();
 			}else if((game.Player.LastPick == 2 || game.Player.LastPick == 3 ||
 					  game.Player.LastPick == 12 || game.Player.LastPick == 13) 
-						&& game.chip.chipzone == 11){ 
+						&& game.chip.chipzone == 11)
+			{ 
 			// if Player used leftshot card && reaches the end of zone
 				this.TryGoalBlock();
 			}
@@ -324,8 +341,8 @@ game.createClass('AI', {
 	DealOffence: function(){
 		console.log('AI Dealing Offence Phase');
 		var position = null;
-		var r = ~~Math.randomBetween(-5, 1);	
-		if(game.chip.chipzone < r){
+		var r = ~~Math.randomBetween(-1, 5);	
+		if(game.chip.chipzone > r){
 			/* if the chip is located randomly between this field,
 			 * check if hold shot cards
 			 * If so, store the position value and pop it from hold stack
@@ -387,7 +404,7 @@ game.createClass('AI', {
 				this.popHold(position);
 			}else if((this.cards[tmp_p] == 2 || this.cards[tmp_p] == 12 ||
 					  this.cards[tmp_p] == 3 || this.cards[tmp_p] == 13) 
-					  && game.chip.chipzone < r)
+					  && game.chip.chipzone > r)
 			{
 				position = tmp_p;
 				this.popHold(position);
@@ -435,6 +452,7 @@ game.createClass('AI', {
 			if(this.cards[tmp_p] == this.HomeIntercept || 
 			   this.cards[tmp_p] == this.AwayIntercept)
 			{
+				console.log('Succeed to trade and get intercept');
 				position = tmp_p;
 				this.popHold(position);
 			}
@@ -502,7 +520,7 @@ game.createClass('AI', {
 			/* since we are not able to block it,
 			 * Player will goal!!
 			 */
-			game.Player.ShotToGoal();
+			this.LostGoal();
 
 			this.EndTurn();
 		}
@@ -510,110 +528,134 @@ game.createClass('AI', {
 	},
 
 	useCard: function(position){
-		this.LastPick = this.cards[position];
 
-		var dice1 = ~~Math.randomBetween(1,7);
-		var dice2 = ~~Math.randomBetween(1,7);
-
-		switch(this.cards[position]){
-			case this.HomePass: case this.AwayPass:  // use pass card
-				game.chip.moveChip( Math.max(dice1, dice2) );
-				if(dice1 == 1 || dice2 == 1){
-					// roll of 1 on either dice, turn ball over
-					console.log('AI use pass card, but roll 1 on dice');
-					this.switchToDeffence();
-					game.Player.switchToOffence();
-					game.chip.TurnOver();
-				}else{
-					console.log('AI succeed to use pass card');
-					if(game.chip.chipzone == 11)
-						this.PassToGoal();
-				}
-				break;
-			case this.HomeLeftShot:  // use goal shot card 
-			case this.HomeRightShot:
-			case this.AwayLeftShot:
-			case this.AwayRightShot:
-				console.log('AI use GoalShot card');
-				game.chip.moveChip( (dice1+dice2) );
-				if(game.chip.chipzone < 11){
-					this.switchToDeffence();
-					game.Player.switchToOffence();
-					game.chip.TurnOver();
-					console.log('Ball not reach the end of zone');
-				}else{
-					/* if the chip did reach the end zone 
-					 * Draw a Referee Card
-					 */
-					this.DrawRefereeCard();
-					console.log(this.HoldReferee);
-					// so far, goal immediatly
-					//this.ShotToGoal();
-				}
-				// else will need to see if player hold the goalblock card
-				break;
-			case this.HomeIntercept: case this.AwayIntercept: // use intercept card
-				if(dice1 == 1 || dice2 == 1){
-					// roll of 1 on either dice will not succeed to intercept
-					console.log('AI use Intercept Card, but failed by rolling 1');
-				}else{
-					// succeed to intercept
-					this.switchToOffence();
-					game.Player.switchToDeffence();
-					game.chip.TurnOver();
-					console.log('AI succeed to use Intercept Card');
-				}
-				break;
-			case this.HomeLeftBlock:  // use goal block card 
-			case this.HomeRightBlock:
-			case this.AwayLeftBlock:
-			case this.AwayRightBlock:
-				console.log('AI use GoalBlock Card');
-				/*	Block the ball, turn it over 
-				 *	switch phase, kick the ball out
-				 */
-				game.chip.TurnOver();
-				game.AI.switchToOffence();
-				game.Player.switchToDeffence();
-
-				console.log('Kick back the ball after block');
-				game.chip.moveChip( (dice1+dice2) );
-
-				/*	Check if roll of 1 on either dice
-				 *	if so, turn the ball over
-				 */
-				if(dice1 == 1 || dice2 == 1){
-					game.chip.TurnOver();
-					game.AI.switchToDeffence();
-					game.Player.switchToOffence();
-				}
-				break;
-			default:
-				console.log('Error: Unknown card in useCard()');
-				break; 
-
-		}
-
-		// draw a new card after use and replace it at some position
-		this.DrawCard(position);
-
-		this.EndTurn();
+		this.RollDueDice(position);
 	},
 
 	useRefereeCard: function(){
+		this.EndTurn();
+	},
 
+	RollDueDice: function(i){
+		var self = this;
+		game.dice.setAiPosition();
+		game.dice.showdue();
+
+		game.scene.addTimer( 1000, function(){
+			game.dice.roll();
+			game.scene.addTimer( 1000, function(){
+				game.dice.stopRoll();
+				game.scene.addTimer(500, self.Transit.bind(self, i));
+			});
+		});
+	},
+
+	Transit: function(i){
+		game.dice.hidedue();
+
+		var self = this;
+		var die1 = game.dice.value1;
+		var die2 = game.dice.value2;
+
+		if(i == null){
+			// kickoff
+			game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
+			
+			game.scene.addTimer( 500, game.gameround.PlayerTurn.bind(game.gameround) );			
+		}else{
+			this.LastPick = this.cards[i];
+			switch(this.cards[i]){
+				case 1: case 11:
+					game.chip.moveChip( Math.max(die1, die2) );
+					if(die1 == 1 || die2 == 1){	// Pass fail by rolling 1
+						game.scene.addTimer(1000, this.PassFail.bind(this, i) );
+					}else{
+						if(game.chip.chipzone == 11){
+							this.PassToGoal();
+						}
+						this.DrawCard(i);
+						this.EndTurn();					
+					}
+					break;
+				case 2: case 3: case 12: case 13:
+					game.chip.moveChip( (die1 + die2) );
+					if(game.chip.chipzone < 11){
+						game.scene.addTimer(1000, this.ShotFail.bind(this, i) );
+					}else{
+						this.DrawRefereeCard();
+						this.DrawCard(i);
+						this.EndTurn();
+					}
+					break;
+				case 4: case 14:
+					if( die1 == 1 || die2 == 1 ){
+						console.log( 'AI fail intercerpt by rolling 1' );
+					}else{
+						this.switchToOffence();
+						game.Player.switchToDeffence();
+						game.chip.TurnOver();
+					}
+					this.DrawCard(i);
+					this.EndTurn();
+					break;
+				case 5: case 6: case 15: case 16:
+					this.switchToOffence();
+					game.Player.switchToDeffence();
+					game.chip.TurnOver();
+					this.DrawCard(i);
+					game.scene.addTimer( 500, function(){
+						game.chip.moveChip( (die1 + die2) );
+
+						if(die1 == 1 || die2 == 1){
+							game.scene.addTimer(1000, function(){
+								self.switchToDeffence();
+								game.Player.switchToOffence();
+								game.chip.TurnOver();
+								self.EndTurn();
+							});
+						}else{
+							game.scene.addTimer(1000, this.EndTurn.bind(this) );
+						}
+					});
+					break;
+				default: 
+					console.log('Unknown Type of Card');
+					break;
+			}
+		}
+
+	},
+
+	PassFail: function(i){
+		console.log('AI pass is blocked by rolling 1');
+		this.switchToDeffence();
+		game.Player.switchToOffence();
+		game.chip.TurnOver();
+		this.DrawCard(i);
+		this.EndTurn();
+	},
+
+	ShotFail: function(i){
+		console.log('AI shot! But didnt reach the end of zone!')
+		this.switchToDeffence();
+		game.Player.switchToOffence();
+		game.chip.TurnOver();
+		this.DrawCard(i);
+		this.EndTurn();
 	},
 
 	PassToGoal: function(){
 		console.log('AI Pass To Goal');
 		this.GoalThisTurn = true;
+		game.gameround.PlayerGetLastGoal = false;
 		this.Score++;
 	},
 
-	ShotToGoal: function(){
-		console.log('AI Shot To Goal');
-		this.GoalThisTurn = true;
-		this.Score++;
+	LostGoal: function(){
+		console.log('Player Shot To Goal');
+		this.LostGoalThisTurn = true;
+		game.gameround.PlayerGetLastGoal = true;
+		game.Player.Score++;
 	},
 
 	checkGoal: function(){
@@ -623,16 +665,41 @@ game.createClass('AI', {
 	// once goaled and before kickoff, reset some value here
 	NewTurnInit: function(){
 		this.GoalThisTurn = false;
+		this.LostGoalThisTurn = false;
 		this.LastPick = null;
 	},
 
 	EndTurn: function(){
+		var self = this;
 		// need animation here
-		if(this.GoalThisTurn){
-			game.gameround.Rounding();
-		}else{
-			game.gameround.PlayerTurn();
-		}
+		game.scene.addTimer(1000, function(){
+			if(self.GoalThisTurn){
+				var goalsprite;
+				if(this.Side == 'Home'){
+					goalsprite = new game.Sprite('Goal_home');					
+				}else if(this.Side == 'Away'){
+					goalsprite = new game.Sprite('Goal_away');
+				}
+				goalsprite.anchor.set(0.5, 0.5);
+				goalsprite.position.set(320, 480);
+				goalsprite.click = goalsprite.tap = game.gameround.Rounding.bind(game.gameround);
+				//game.gameround.Rounding();
+			}else if( self.LostGoalThisTurn ){
+				var goalsprite;
+				if(this.Side == 'Away'){
+					goalsprite = new game.Sprite('Goal_home');					
+				}else if(this.Side == 'Home'){
+					goalsprite = new game.Sprite('Goal_away');
+				}
+				goalsprite.anchor.set(0.5, 0.5);
+				goalsprite.position.set(320, 480);
+				goalsprite.click = goalsprite.tap = game.gameround.Rounding.bind(game.gameround);
+				//game.gameround.Rounding();
+			}else{
+				game.gameround.PlayerTurn();
+			}
+		});
+			
 	}
 
 });

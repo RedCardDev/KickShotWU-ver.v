@@ -80,7 +80,8 @@ game.createClass('CardMenu', {
 		
 
 		this.backButton = new game.Sprite('backButton', 490, 850, {
-			anchor: {x: 0.5, y: 0.5}
+			anchor: {x: 0.5, y: 0.5},
+			scale: {x: 0.5, y: 0.5}
 		}).addTo(game.scene.stage);
 		this.backButton.visible = false;
 		this.backButton.buttonMode = true;
@@ -109,8 +110,12 @@ game.createClass('CardMenu', {
 	showMenu: function(){
 		this.blackSquare.visible = true;
 		this.textbox.visible = true;
-		this.rightArrow.visible = true;
-		this.leftArrow.visible = true;
+		if(this.select != this.cards.length-1){
+			this.rightArrow.visible = true;
+		}
+		if(this.select != 0){
+			this.leftArrow.visible = true;
+		}
 		this.useCardButton.visible = true;
 		if(!this.traded){
 			this.tradeButton.visible = true;
@@ -224,7 +229,7 @@ game.createClass('CardMenu', {
 		this.cards[i].sprite.setTexture(name);
 	},
 
-	InteractLeftArrow: function(){
+	InteractRightArrow: function(){
     	var tweenGroup = new game.TweenGroup();
 
     	// =======  Left one zoom in ===========
@@ -262,15 +267,15 @@ game.createClass('CardMenu', {
 
     	this.select++;
     	if(this.select == 5){
-    		this.leftArrow.visible = false;
-    		this.rightArrow.visible = true;
+    		this.leftArrow.visible = true;
+    		this.rightArrow.visible = false;
     	}else{
     		this.leftArrow.visible = true;
     		this.rightArrow.visible = true;
     	}
     },
 
-    InteractRightArrow: function(){
+    InteractLeftArrow: function(){
     	var tweenGroup = new game.TweenGroup();
 
     	// =======  Hidden one zoom out to left ===========
@@ -307,8 +312,8 @@ game.createClass('CardMenu', {
 
     	this.select--;
     	if(this.select == 0){
-    		this.leftArrow.visible = true;
-    		this.rightArrow.visible = false;
+    		this.leftArrow.visible = false;
+    		this.rightArrow.visible = true;
     	}else{
     		this.leftArrow.visible = true;
     		this.rightArrow.visible = true;
@@ -317,7 +322,71 @@ game.createClass('CardMenu', {
     },
 
     InteractUseButton: function(){
-    	game.Player.UseCard(this.select); 	
+    	//game.Player.Permission(this.select); 
+    	// Test the permisson of current select card
+    	switch(this.cards[this.select].Type){
+			case 1: case 11: // Pass Permission 
+				if(!game.Player.currentOffence){
+					var loremlong = "You are curretly not in Offence Phase. Can\'t use Pass Card. Please Try Use Other Cards";
+					var text = new game.PIXI.Text(loremlong, {
+						font: 'Foo', 
+						wordWrap: true, 
+						wordWrapWidth: 400,
+						align: "center"
+					});
+					text.position.y = 400;
+					game.scene.stage.addChild(text);
+				}else{
+					console.log('TestUsePass');
+					this.hideMenu();
+					game.Player.RollDueDice(this.select);
+				}
+				break;
+			case 2: case 3: case 12: case 13:
+				if(!this.currentOffence){
+					console.log('You are currently not in Offence! Not Able to use shot');
+				}else{
+					console.log('TestUseShot');
+					this.hideMenu();
+					game.Player.RollDueDice(this.select);
+				}
+				break;
+			case 4: case 14:
+				if(this.currentOffence){
+					console.log('You are currently in Offence! Not Able to use intercerpt');
+				}else{
+					this.hideMenu();
+					game.Player.RollDueDice(this.select);
+				}
+				break;
+			case 5: case 15: 
+				if(this.currentOffence){
+					console.log('You are currently in Offence! Not Able to use UseLeftBlock');
+				}else if(game.AI.LastPick == 3 || game.AI.LastPick == 13){
+					console.log('The Block Direction is not the same as AI shot direction!');
+				}else if(game.AI.LastPick == 2 || game.AI.LastPick == 12){
+					this.hideMenu();
+					game.Player.RollDueDice(this.select);
+				}else{
+					console.log('AI didn\'t use goal shot card, no need block');
+				}
+				break;
+			case 6: case 16: 
+				if(this.currentOffence){
+					console.log('You are currently in Offence! Not Able to use intercerpt');
+				}else if(game.AI.LastPick == 2 || game.AI.LastPick == 12){
+					console.log('The Block Direction is not the same as AI shot direction!');
+				}else if(game.AI.LastPick == 3 || game.AI.LastPick == 13){
+					this.hideMenu();
+					game.Player.RollDueDice(select);
+				}else{
+					console.log('AI didn\'t use goal shot card, no need block');
+				}
+				break;
+			default:
+				console.log('Unknown cardType in UseCard- captain()');
+				break;
+		}
     },
 
     InteractSkipButton: function(){
@@ -326,9 +395,8 @@ game.createClass('CardMenu', {
     		 game.AI.LastPick == 12 || game.AI.LastPick == 13) && 
     		 game.chip.chipzone == 11 )
     	{	// if skip turn with AI has goal shot last turn 
-    		game.AI.ShotToGoal();
-    		game.gameround.PlayerGetLastGoal = false;
-    		game.scene.addTimer(1000, game.gameround.Rounding.bind(game.gameround));
+    		game.Player.LostGoal();
+    		game.Player.EndTurn();
     	}else{
     		game.scene.addTimer(1000, game.gameround.AITurn.bind(game.gameround));
     	}

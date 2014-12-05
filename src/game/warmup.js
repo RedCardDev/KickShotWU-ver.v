@@ -63,17 +63,6 @@ game.createScene('WarmUp', {
 	HomeAway: function(){
 		var self = this;
 
-		// ===================
-		/*	Roll Text is kind a button on right-bot corner
-		 *	that click/tap on it will start dice rolling
-		 */
-		this.RollText = new game.BitmapText('Roll', { font: 'Foo' });
-		this.RollText.visible = false;
-		this.RollText.position.set(490, 850);
-		this.RollText.interactive = true;
-		this.RollText.buttonMode = true;
-		this.RollText.tap = this.RollText.click = this.PlayerRollSingleDice.bind(this);
-
 		// =================
 		var StartText = new game.BitmapText('Let\'s Start', { font: 'Foo' });
 		StartText.position.set(200, 500);
@@ -92,14 +81,12 @@ game.createScene('WarmUp', {
 		StartJudge.tap = StartJudge.click = function(){
 			StartJudge.visible = false;
 			StartText.setText();
-			self.RollText.visible = true;				
+
+			self.PlayerRollSingleDice();				
 		};
 
-
-		this.RollText.addTo(game.scene.stage);
 		StartText.addTo(game.scene.stage);
-		game.scene.stage.addChild(StartJudge);
-		
+		game.scene.stage.addChild(StartJudge);		
 	},
 
 	/*	In case of the same roll value, Seperate Player's Roll with AI's Roll
@@ -107,7 +94,6 @@ game.createScene('WarmUp', {
 	 */
 	PlayerRollSingleDice: function(){
 		var self = this;
-		this.RollText.visible = false;
 
 		game.dice.setPlayerPosition();
 		game.dice.showsingle();
@@ -206,17 +192,12 @@ game.createScene('WarmUp', {
 		game.RefereePile = new game.RefereePile();
 		game.chip = new game.Chip();
 
-		//game.dice.reset();
-
 		this.PlayerGetLastGoal = !this.PlayerIsHome;
 
 		game.gameround = new game.GameRound(this.PlayerIsHome);
 		game.gameround.Rounding();
-		//this.GameRound();
-	},
 
-	// =======================================================
-
+	}
 });
 
 game.createClass('GameRound', {
@@ -265,21 +246,24 @@ game.createClass('GameRound', {
 	KickOff: function(){
 		var self = this;
 		game.chip.resetchip(this.PlayerIsHome, this.PlayerGetLastGoal);
-		// dice roll
 
-		if(this.PlayerGetLastGoal)	{
-			// AI kickoff
-			this.PlayerLastPlay = false;
-			game.dice.setAiPosition();
-		}else{
-			//Player KickOff
-			this.PlayerLastPlay = true;
-			game.dice.setPlayerPosition();
-		}
-		
-		game.scene.addTimer( 500, this.RollDueDice.bind(this) );
+		if(this.PlayerGetLastGoal)	game.AI.RollDueDice(null);
+		else						game.Player.RollDueDice(null);	
 	},
 
+	PlayerTurn: function(){
+		console.log('Player\'s Turn');
+		game.dice.setPlayerPosition();
+		game.Player.ShowCardPick();	
+	},
+
+	AITurn: function(){
+		console.log('AI\'s Turn');
+		game.dice.setAiPosition();
+		game.AI.SmartPlay();
+	}
+
+	/*
 	RollDueDice: function(){
 		var self = this;
 		game.dice.showdue();
@@ -322,18 +306,7 @@ game.createClass('GameRound', {
 		}
 
 	},
-
-	PlayerTurn: function(){
-		console.log('Player\'s Turn');
-		game.dice.setPlayerPosition();
-		game.Player.ShowCardPick();	
-	},
-
-	AITurn: function(){
-		console.log('AI\'s Turn');
-		game.dice.setAiPosition();
-		game.AI.SmartPlay();
-	}
+	 */
 
 });
 
