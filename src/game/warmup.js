@@ -272,22 +272,26 @@ game.createClass('GameRound', {
 		text.position.set(-400, 300);
 
 		var tween1 = new game.Tween(text.position);
-		tween1.to({x: 150}, 1000);
+		tween1.to({x: 150}, 600);
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 800}, 1000);
+		tween2.to({x: 800}, 600);
 		tween2.easing(game.Tween.Easing.Back.In );
 		tween2.delay(2000);
 
 		tween1.chain(tween2);
 
 		if(this.PlayerGetLastGoal)	{
+			game.Player.switchToDeffence();
+			game.AI.switchToOffence();
 			text.setText(str2);
 			tween2.onComplete( function(){
 				game.AI.RollDueDice(null);
 			});		
 		}else{
+			game.AI.switchToDeffence();
+			game.Player.switchToOffence();
 			tween2.onComplete( function(){
 				game.Player.RollDueDice(null);
 			});	
