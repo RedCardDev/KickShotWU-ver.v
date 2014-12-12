@@ -183,6 +183,7 @@ game.createClass('CardMenu', {
 	},
 
 	ChangeSprite: function(type, i){
+		var name;
 		switch(type){
 			case 1:
 				name = 'Pass_home';

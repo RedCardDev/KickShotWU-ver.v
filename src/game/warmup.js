@@ -55,12 +55,6 @@ game.createScene('WarmUp', {
 	},
 
 	NewGame: function(){
-		this.HomeAway();
-	},
-
-	// =================================================================
-	/*	Functions to decide HomeAway */
-	HomeAway: function(){
 		var self = this;
 
 		// =================
@@ -82,11 +76,36 @@ game.createScene('WarmUp', {
 			StartJudge.visible = false;
 			StartText.setText();
 
-			self.PlayerRollSingleDice();				
+			self.HomeAway();				
 		};
 
 		StartText.addTo(game.scene.stage);
-		game.scene.stage.addChild(StartJudge);		
+		game.scene.stage.addChild(StartJudge);
+		
+	},
+
+	// =================================================================
+	/*	Functions to decide HomeAway */
+	HomeAway: function(){
+		var d_str = "Roll single dice \nto determine \nwho is Home Side";
+		var text = new game.BitmapText(d_str, { font: '60 Foo', align: 'center' });
+		text.position.set(-400, 200);
+		text.addTo(game.scene.stage);
+
+		var tween1 = new game.Tween(text.position);
+		tween1.to({x: 130}, 1000);
+		tween1.easing( game.Tween.Easing.Back.Out);
+
+		var tween2 = new game.Tween(text.position);
+		tween2.to({x: 800}, 1000);
+		tween2.easing(game.Tween.Easing.Back.In );
+		tween2.delay(2000);
+
+		tween2.onComplete(this.PlayerRollSingleDice.bind(this));
+
+		tween1.chain(tween2);
+		tween1.start();
+
 	},
 
 	/*	In case of the same roll value, Seperate Player's Roll with AI's Roll
@@ -246,9 +265,36 @@ game.createClass('GameRound', {
 	KickOff: function(){
 		var self = this;
 		game.chip.resetchip(this.PlayerIsHome, this.PlayerGetLastGoal);
+		var str1 = "Your KickOff";
+		var str2 = "AI KickOff";
 
-		if(this.PlayerGetLastGoal)	game.AI.RollDueDice(null);
-		else						game.Player.RollDueDice(null);	
+		var text = new game.BitmapText(str1, { font: 'Foo', align: 'center' });
+		text.position.set(-400, 300);
+
+		var tween1 = new game.Tween(text.position);
+		tween1.to({x: 150}, 1000);
+		tween1.easing( game.Tween.Easing.Back.Out);
+
+		var tween2 = new game.Tween(text.position);
+		tween2.to({x: 800}, 1000);
+		tween2.easing(game.Tween.Easing.Back.In );
+		tween2.delay(2000);
+
+		tween1.chain(tween2);
+
+		if(this.PlayerGetLastGoal)	{
+			text.setText(str2);
+			tween2.onComplete( function(){
+				game.AI.RollDueDice(null);
+			});		
+		}else{
+			tween2.onComplete( function(){
+				game.Player.RollDueDice(null);
+			});	
+		}	
+		tween1.start();	
+		text.addTo(game.scene.stage);
+						
 	},
 
 	PlayerTurn: function(){
@@ -260,53 +306,9 @@ game.createClass('GameRound', {
 	AITurn: function(){
 		console.log('AI\'s Turn');
 		game.dice.setAiPosition();
-		game.AI.SmartPlay();
+		game.AI.StartThinking();
 	}
 
-	/*
-	RollDueDice: function(){
-		var self = this;
-		game.dice.showdue();
-
-		game.scene.addTimer(1000, this.StartRoll.bind(this) );
-	},
-
-	StartRoll: function(){
-		game.dice.roll();
-		game.scene.addTimer( 1000, this.StopRoll.bind(this) );
-	},
-
-	StopRoll: function(){
-		game.dice.stopRoll();
-		console.log('Test stoproll');
-		game.scene.addTimer( 500, this.Transit.bind(this) );
-	}, 
-
-	Transit: function(){
-		game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
-
-		game.scene.addTimer(500, game.dice.hidedue.bind(game.dice) );
-
-
-
-		if(game.Player.checkGoal()){
-			console.log('Player Get Goal, Reset Ball, AI kickoff');
-			this.PlayerGetLastGoal = true;
-			this.GameRound();
-		}else if(game.AI.checkGoal()){
-			console.log('AI Get Goal, Reset Ball, Player kickoff');
-			this.PlayerGetLastGoal = false;
-			this.GameRound();
-		}else{
-			if(this.PlayerLastPlay){
-				this.AITurn();
-			}else{
-				this.PlayerTurn();
-			}
-		}
-
-	},
-	 */
 
 });
 

@@ -282,6 +282,31 @@ game.createClass('AI', {
 
 	},
 
+	StartThinking: function(){
+		var text = new game.BitmapText('AI Is Thinking . . .', { font: 'Foo' });
+		text.position.set(120, 200);
+		
+		this.RemainThinking(text, 0);
+		text.addTo(game.scene.stage);
+	},
+
+	RemainThinking: function(text, i){
+		console.log(i);
+		var self = this;
+		if(i == 13){
+			text.visible = false;
+			this.SmartPlay();
+		}else{
+			if(i % 4 == 0)		text.setText('AI Is Thinking');
+			else if(i % 4 == 1)	text.setText('AI Is Thinking .');
+			else if(i % 4 == 2)	text.setText('AI Is Thinking . .');
+			else if(i % 4 == 3)	text.setText('AI Is Thinking . . .');
+
+			i++;
+			game.scene.addTimer(250, self.RemainThinking.bind(self, text, i));
+		}
+	},
+
 	SmartPlay: function(){
 		if(this.currentOffence){
 			this.DealOffence();
@@ -528,8 +553,69 @@ game.createClass('AI', {
 	},
 
 	useCard: function(position){
+		var self = this;
+		var name;
+		switch(this.cards[position]){
+			case 1:
+				name = 'Pass_home';
+				break;
+			case 2:
+				name = 'LeftShot_home';
+				break;
+			case 3:
+				name = 'RightShot_home';
+				break;
+			case 4:
+				name = 'Intercept_home';
+				break;
+			case 5:
+				name = 'LeftBlock_home';
+				break;
+			case 6:
+				name = 'RightBlock_home';
+				break;
+			case 11:
+				name = 'Pass_away';
+				break;
+			case 12:
+				name = 'LeftShot_away';
+				break;
+			case 13:
+				name = 'RightShot_away';
+				break;
+			case 14:
+				name = 'Intercept_away';
+				break;
+			case 15:
+				name = 'LeftBlock_away';
+				break;
+			case 16:
+				name = 'RightBlock_away';
+				break;
+			default:
+				console.log('Unknown cardType in iniSprite - cardmenu.js');
+				break;
+		}
 
-		this.RollDueDice(position);
+		console.log('Test CardSprite Name: '+name);
+		this.CardSprite = new game.Sprite(name,  320, -100, {
+			anchor: {x: 0.5, y: 0.5},
+			scale: {x: 0.4, y: 0.4},
+		});
+
+		var tween = new game.Tween(this.CardSprite.position);
+		tween.to({y: 480}, 700);
+
+		tween.onComplete(function(){
+			game.scene.addTimer(1000, function(){
+				self.CardSprite.visible = false;
+				self.RollDueDice(position);
+			});
+			
+		});
+
+		game.scene.addTimer(500, tween.start());
+		game.scene.stage.addChild(this.CardSprite);
 	},
 
 	useRefereeCard: function(){
