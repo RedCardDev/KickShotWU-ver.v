@@ -61,7 +61,7 @@ game.createClass('Captain', {
 
 		this.cardmenu = new game.CardMenu(this.cards);
 
-		var text1 = new game.BitmapText(this.Side, {font: 'Foo'});
+		var text1 = new game.BitmapText( this.Side, {font: 'Foo'} );
 		text1.position.set(10, 850);
 
 		this.phase.position.set(450, 850);
@@ -279,31 +279,24 @@ game.createClass('Captain', {
 	},
 
 	EndTurn: function(){
-		if(self.GoalThisTurn){
-			var goalsprite;
-			if(this.Side == 'Home'){
-				goalsprite = new game.Sprite('Goal_home');					
-			}else if(this.Side == 'Away'){
-				goalsprite = new game.Sprite('Goal_away');
-			}
-			goalsprite.anchor.set(0.5, 0.5);
-			goalsprite.position.set(320, 480);
-			goalsprite.click = goalsprite.tap = game.gameround.Rounding.bind(game.gameround);
-			//game.gameround.Rounding();
-		}else if( self.LostGoalThisTurn ){
-			var goalsprite;
-			if(this.Side == 'Away'){
-				goalsprite = new game.Sprite('Goal_home');					
-			}else if(this.Side == 'Home'){
-				goalsprite = new game.Sprite('Goal_away');
-			}
-			goalsprite.anchor.set(0.5, 0.5);
-			goalsprite.position.set(320, 480);
-			goalsprite.click = goalsprite.tap = game.gameround.Rounding.bind(game.gameround);
-			//game.gameround.Rounding();
+		var goalsprite = new game.Sprite('Goal_home');
+		
+		if(( this.GoalThisTurn 		&& this.Side == 'Away') ||
+		   ( this.LostGoalThisTurn  && this.Side == 'Home') )
+		{
+			goalsprite = new game.Sprite('Goal_away');
 		}else{
+			goalsprite.visible = false;
 			game.gameround.AITurn();
 		}	
+		goalsprite.anchor.set(0.5, 0.5);
+		goalsprite.position.set(320, 480);
+		goalsprite.interactive = true;
+		goalsprite.click = goalsprite.tap = function(){
+			goalsprite.visible = false;
+			game.gameround.Rounding();
+		};
+		game.scene.stage.addChild(goalsprite);
 	},
 
 	// once goaled and before kickoff, reset some value here

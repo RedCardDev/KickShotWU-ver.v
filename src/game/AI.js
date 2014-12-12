@@ -302,8 +302,7 @@ game.createClass('AI', {
 			else if(i % 4 == 2)	text.setText('AI Is Thinking . .');
 			else if(i % 4 == 3)	text.setText('AI Is Thinking . . .');
 
-			i++;
-			game.scene.addTimer(250, self.RemainThinking.bind(self, text, i));
+			game.scene.addTimer(250, self.RemainThinking.bind(self, text, i++));
 		}
 	},
 

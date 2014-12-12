@@ -298,15 +298,45 @@ game.createClass('GameRound', {
 	},
 
 	PlayerTurn: function(){
-		console.log('Player\'s Turn');
-		game.dice.setPlayerPosition();
-		game.Player.ShowCardPick();	
+		var text = new game.BitmapText('Your Turn', { font: 'Foo', align: 'center' });
+		text.position.set( -100, 600 );
+		text.addTo(game.scene.stage);
+
+		var tween1 = new game.Tween(text.position);
+		tween1.to({x: 150 }, 700);
+
+		var tween2 = new game.Tween(text.position);
+		tween2.to({x: 700 }, 700);
+		tween2.delay(700);
+
+		tween2.onComplete(function(){
+			game.dice.setPlayerPosition();
+			game.Player.ShowCardPick();	
+		});
+
+		tween1.chain(tween2);
+		tween1.start();		
 	},
 
 	AITurn: function(){
-		console.log('AI\'s Turn');
-		game.dice.setAiPosition();
-		game.AI.StartThinking();
+		var text = new game.BitmapText('AI\'s Turn', { font: 'Foo', align: 'center' });
+		text.position.set( -100, 300 );
+		text.addTo(game.scene.stage);
+
+		var tween1 = new game.Tween(text.position);
+		tween1.to({x: 150 }, 700);
+
+		var tween2 = new game.Tween(text.position);
+		tween2.to({x: 700 }, 700);
+		tween2.delay(700);
+
+		tween2.onComplete(function(){
+			game.dice.setPlayerPosition();
+			game.AI.StartThinking();	
+		});
+
+		tween1.chain(tween2);
+		tween1.start();	
 	}
 
 

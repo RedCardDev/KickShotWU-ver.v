@@ -344,7 +344,7 @@ game.createClass('CardMenu', {
 				}
 				break;
 			case 2: case 3: case 12: case 13:
-				if(!this.currentOffence){
+				if(!game.Player.currentOffence){
 					console.log('You are currently not in Offence! Not Able to use shot');
 				}else{
 					console.log('TestUseShot');
@@ -353,7 +353,7 @@ game.createClass('CardMenu', {
 				}
 				break;
 			case 4: case 14:
-				if(this.currentOffence){
+				if(game.Player.currentOffence){
 					console.log('You are currently in Offence! Not Able to use intercerpt');
 				}else{
 					this.hideMenu();
@@ -361,7 +361,7 @@ game.createClass('CardMenu', {
 				}
 				break;
 			case 5: case 15: 
-				if(this.currentOffence){
+				if(game.Player.currentOffence){
 					console.log('You are currently in Offence! Not Able to use UseLeftBlock');
 				}else if(game.AI.LastPick == 3 || game.AI.LastPick == 13){
 					console.log('The Block Direction is not the same as AI shot direction!');
@@ -373,7 +373,7 @@ game.createClass('CardMenu', {
 				}
 				break;
 			case 6: case 16: 
-				if(this.currentOffence){
+				if(game.Player.currentOffence){
 					console.log('You are currently in Offence! Not Able to use intercerpt');
 				}else if(game.AI.LastPick == 2 || game.AI.LastPick == 12){
 					console.log('The Block Direction is not the same as AI shot direction!');
@@ -399,6 +399,7 @@ game.createClass('CardMenu', {
     		game.Player.LostGoal();
     		game.Player.EndTurn();
     	}else{
+    		game.Player.LastPick = null;
     		game.scene.addTimer(1000, game.gameround.AITurn.bind(game.gameround));
     	}
     },
