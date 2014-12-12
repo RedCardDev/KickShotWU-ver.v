@@ -302,7 +302,8 @@ game.createClass('AI', {
 			else if(i % 4 == 2)	text.setText('AI Is Thinking . .');
 			else if(i % 4 == 3)	text.setText('AI Is Thinking . . .');
 
-			game.scene.addTimer(250, self.RemainThinking.bind(self, text, i++));
+			i++;
+			game.scene.addTimer(250, self.RemainThinking.bind(self, text, i));
 		}
 	},
 
@@ -313,13 +314,13 @@ game.createClass('AI', {
 			// check last card Player use, since in Deffence, only check 1,2,3 or 11,12,13, or null
 			if(game.Player.LastPick == null || game.Player.LastPick == 0 ||
 				game.Player.LastPick == 1 || game.Player.LastPick == 11 ||
-				game.Player.LastPick == 4 || gane.Player.LastPick == 14)
+				game.Player.LastPick == 4 || game.Player.LastPick == 14)
 			{	
 				// if Player used pass card, or didnt use any card last turn
 				this.TryIntercept();
 			}else if((game.Player.LastPick == 2 || game.Player.LastPick == 3 ||
 					  game.Player.LastPick == 12 || game.Player.LastPick == 13) 
-						&& game.chip.chipzone == 11)
+						&& game.chip.chipzone == -11)
 			{ 
 			// if Player used leftshot card && reaches the end of zone
 				this.TryGoalBlock();
@@ -699,7 +700,7 @@ game.createClass('AI', {
 								self.EndTurn();
 							});
 						}else{
-							game.scene.addTimer(1000, this.EndTurn.bind(this) );
+							game.scene.addTimer(1000, self.EndTurn.bind(self) );
 						}
 					});
 					break;
@@ -757,32 +758,26 @@ game.createClass('AI', {
 	EndTurn: function(){
 		var self = this;
 		// need animation here
+
 		game.scene.addTimer(1000, function(){
-			if(self.GoalThisTurn){
-				var goalsprite;
-				if(this.Side == 'Home'){
-					goalsprite = new game.Sprite('Goal_home');					
-				}else if(this.Side == 'Away'){
-					goalsprite = new game.Sprite('Goal_away');
-				}
-				goalsprite.anchor.set(0.5, 0.5);
-				goalsprite.position.set(320, 480);
-				goalsprite.click = goalsprite.tap = game.gameround.Rounding.bind(game.gameround);
-				//game.gameround.Rounding();
-			}else if( self.LostGoalThisTurn ){
-				var goalsprite;
-				if(this.Side == 'Away'){
-					goalsprite = new game.Sprite('Goal_home');					
-				}else if(this.Side == 'Home'){
-					goalsprite = new game.Sprite('Goal_away');
-				}
-				goalsprite.anchor.set(0.5, 0.5);
-				goalsprite.position.set(320, 480);
-				goalsprite.click = goalsprite.tap = game.gameround.Rounding.bind(game.gameround);
-				//game.gameround.Rounding();
+			var goalsprite = new game.Sprite('Goal_home');
+			
+			if( ( self.GoalThisTurn 	&& self.Side == 'Away' ) ||
+				( self.LostGoalThisTurn && self.Side == 'Home' )){
+				goalsprite = new game.Sprite('Goal_away');					
 			}else{
+				goalsprite.visible = false;
 				game.gameround.PlayerTurn();
 			}
+
+			goalsprite.anchor.set(0.5, 0.5);
+			goalsprite.position.set(320, 480);
+			goalsprite.interactive = true;
+			goalsprite.click = goalsprite.tap = function(){
+				goalsprite.visible = false;
+				game.gameround.Rounding();
+			};
+			game.scene.stage.addChild(goalsprite);
 		});
 			
 	}
