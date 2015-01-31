@@ -122,7 +122,7 @@ game.createClass('Captain', {
 
 	ShowCardPick: function(){
 		this.cardmenu.traded = false;
-		game.scene.addTimer(500, this.cardmenu.showMenu.bind(this.cardmenu) );
+		game.scene.addTimer(5, this.cardmenu.showMenu.bind(this.cardmenu) );
 	},
 
 	tradeCard: function(position){
@@ -161,13 +161,13 @@ game.createClass('Captain', {
 	RollDueDice: function(i){
 		var self = this;
 		game.dice.setPlayerPosition();
-		game.scene.addTimer( 1000, function(){
+		game.scene.addTimer( 10, function(){
 			game.dice.showdue();
-			game.scene.addTimer( 1000, function(){
+			game.scene.addTimer( 10, function(){
 				game.dice.roll();
-				game.scene.addTimer( 1000, function(){
+				game.scene.addTimer( 10, function(){
 					game.dice.stopRoll();
-					game.scene.addTimer(500, self.Use.bind(self, i));
+					game.scene.addTimer(5, self.Use.bind(self, i));
 				});
 			});
 		});			
@@ -187,7 +187,7 @@ game.createClass('Captain', {
 			// kickoff
 			game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
 			
-			game.scene.addTimer( 500, game.gameround.AITurn.bind(game.gameround) );		
+			game.scene.addTimer( 5, game.gameround.AITurn.bind(game.gameround) );		
 		}else{
 			this.LastPick = this.cards[i];
 			switch(this.cards[i]){
@@ -196,7 +196,7 @@ game.createClass('Captain', {
 					game.chip.moveChip( Math.max(die1, die2) );
 					if(die1 == 1 || die2 == 1){
 						console.log('Pass was blocked by rolling 1');
-						game.scene.addTimer(1000, this.PassOrShotFail.bind(this, i) );
+						game.scene.addTimer(10, this.PassOrShotFail.bind(this, i) );
 					}else{
 						if(game.chip.chipzone == -11){
 							this.PassToGoal();
@@ -209,7 +209,7 @@ game.createClass('Captain', {
 					console.log();
 					game.chip.moveChip( (die1 + die2) );
 					if(game.chip.chipzone > -11){
-						game.scene.addTimer(1000, this.PassOrShotFail.bind(this, i) );
+						game.scene.addTimer(10, this.PassOrShotFail.bind(this, i) );
 					}else{
 						this.DrawRefereeCard();
 						this.DrawAfterUse(i);
@@ -235,11 +235,11 @@ game.createClass('Captain', {
 					game.chip.TurnOver();
 					this.DrawAfterUse(i);
 
-					game.scene.addTimer( 500, function(){
+					game.scene.addTimer( 5, function(){
 						game.chip.moveChip( (die1 + die2) );
 
 						if(die1 == 1 || die2 == 1){
-							game.scene.addTimer(1000, function(){
+							game.scene.addTimer(10, function(){
 								self.switchToDeffence();
 								game.AI.switchToOffence();
 								game.chip.TurnOver();

@@ -2,6 +2,8 @@ game.module(
     'game.dice'
 ).body(function() {
 
+var SuperSpeed = 1;
+
 game.createClass('Dice', {
     rolling: false,
     value1: 1,
@@ -27,31 +29,72 @@ game.createClass('Dice', {
             this.value2 = ~~Math.randomBetween(1, 7);
             this.die1.setTexture('dice' + this.value1);
             this.die2.setTexture('dice' + this.value2);
-            game.scene.addTimer(100, function() {
-                self.timing = false;
-            });
+			if (SuperSpeed == 1)
+			{
+				game.scene.addTimer(1, function() {
+					self.timing = false;
+				});
+			}
+			else
+			{
+				game.scene.addTimer(100, function() {
+					self.timing = false;
+				});
+			}
+			
         }
     },
 
     showdue: function() {
-        game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
-        game.scene.addTween(this.die2, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
-    },
+		if (SuperSpeed == 1)
+		{
+			game.scene.addTween(this.die1, {x: 100}, 5, { easing: game.Tween.Easing.Back.Out }).start();
+			game.scene.addTween(this.die2, {x: 100}, 5, { easing: game.Tween.Easing.Back.Out }).start();
+		}
+		else
+		{
+			game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
+			game.scene.addTween(this.die2, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
+		}
+	},
 
     hidedue: function() {
-        game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
-        game.scene.addTween(this.die2, {x: -this.die2.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
-    },
+		if (SuperSpeed == 1)
+		{
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 5, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die2, {x: -this.die2.width}, 5, { easing: game.Tween.Easing.Back.In }).start();
+		}
+		else
+		{
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die2, {x: -this.die2.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
+		}
+		
+	},
 
     // ============================================
     /* showsingle and hidesingle are used for homeaway decision, which roll single dice */
     showsingle: function(){
-        game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();        
+		if (SuperSpeed == 1)
+		{
+			game.scene.addTween(this.die1, {x: 100}, 5, { easing: game.Tween.Easing.Back.Out }).start();   
+		}
+		else
+		{
+			game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();   
+		}
     },
 
     hidesingle: function(){
-        game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
-    },
+		if (SuperSpeed == 1)
+		{
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 5, { easing: game.Tween.Easing.Back.In }).start();
+		}
+		else
+		{
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
+		}
+	},
 
     //=============================================
 

@@ -2,6 +2,8 @@ game.module(
     'game.AI'
 )
 .body(function() {
+
+var SuperSpeed = 1;
     
 /*
  *	A player class will hold all the current infomation for this player
@@ -144,7 +146,14 @@ game.createClass('AI', {
 			else if(i % 4 == 3)	text.setText('AI Is Thinking . . .');
 
 			i++;
-			game.scene.addTimer(250, self.RemainThinking.bind(self, text, i));
+			if (SuperSpeed == 1)
+			{
+				game.scene.addTimer(2, self.RemainThinking.bind(self, text, i));
+			}
+			else
+			{
+				game.scene.addTimer(250, self.RemainThinking.bind(self, text, i));
+			}
 		}
 	},
 
@@ -443,18 +452,36 @@ game.createClass('AI', {
 			scale: {x: 0.4, y: 0.4},
 		});
 
-		var tween = new game.Tween(this.CardSprite.position);
-		tween.to({y: 480}, 700);
+		if (SuperSpeed == 1)
+		{
+			var tween = new game.Tween(this.CardSprite.position);
+			tween.to({y: 480}, 7);
 
-		tween.onComplete(function(){
-			game.scene.addTimer(1000, function(){
-				self.CardSprite.visible = false;
-				self.RollDueDice(position);
+			tween.onComplete(function(){
+				game.scene.addTimer(10, function(){
+					self.CardSprite.visible = false;
+					self.RollDueDice(position);
+				});
+				
 			});
-			
-		});
 
-		game.scene.addTimer(500, tween.start());
+			game.scene.addTimer(5, tween.start());
+		}
+		else
+		{
+			var tween = new game.Tween(this.CardSprite.position);
+			tween.to({y: 480}, 700);
+
+			tween.onComplete(function(){
+				game.scene.addTimer(1000, function(){
+					self.CardSprite.visible = false;
+					self.RollDueDice(position);
+				});
+				
+			});
+
+			game.scene.addTimer(500, tween.start());
+		}
 		game.scene.stage.addChild(this.CardSprite);
 	},
 
@@ -467,11 +494,11 @@ game.createClass('AI', {
 		game.dice.setAiPosition();
 		game.dice.showdue();
 
-		game.scene.addTimer( 1000, function(){
+		game.scene.addTimer( 10, function(){
 			game.dice.roll();
-			game.scene.addTimer( 1000, function(){
+			game.scene.addTimer( 10, function(){
 				game.dice.stopRoll();
-				game.scene.addTimer(500, self.Transit.bind(self, i));
+				game.scene.addTimer(5, self.Transit.bind(self, i));
 			});
 		});
 	},
@@ -487,14 +514,14 @@ game.createClass('AI', {
 			// kickoff
 			game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
 			
-			game.scene.addTimer( 500, game.gameround.PlayerTurn.bind(game.gameround) );			
+			game.scene.addTimer( 5, game.gameround.PlayerTurn.bind(game.gameround) );			
 		}else{
 			this.LastPick = this.cards[i];
 			switch(this.cards[i]){
 				case 1: case 11:
 					game.chip.moveChip( Math.max(die1, die2) );
 					if(die1 == 1 || die2 == 1){	// Pass fail by rolling 1
-						game.scene.addTimer(1000, this.PassFail.bind(this, i) );
+						game.scene.addTimer(10, this.PassFail.bind(this, i) );
 					}else{
 						if(game.chip.chipzone == 11){
 							this.PassToGoal();
@@ -506,7 +533,7 @@ game.createClass('AI', {
 				case 2: case 3: case 12: case 13:
 					game.chip.moveChip( (die1 + die2) );
 					if(game.chip.chipzone < 11){
-						game.scene.addTimer(1000, this.ShotFail.bind(this, i) );
+						game.scene.addTimer(10, this.ShotFail.bind(this, i) );
 					}else{
 						this.DrawRefereeCard();
 						this.DrawCard(i);
@@ -529,18 +556,18 @@ game.createClass('AI', {
 					game.Player.switchToDeffence();
 					game.chip.TurnOver();
 					this.DrawCard(i);
-					game.scene.addTimer( 500, function(){
+					game.scene.addTimer( 5, function(){
 						game.chip.moveChip( (die1 + die2) );
 
 						if(die1 == 1 || die2 == 1){
-							game.scene.addTimer(1000, function(){
+							game.scene.addTimer(10, function(){
 								self.switchToDeffence();
 								game.Player.switchToOffence();
 								game.chip.TurnOver();
 								self.EndTurn();
 							});
 						}else{
-							game.scene.addTimer(1000, self.EndTurn.bind(self) );
+							game.scene.addTimer(10, self.EndTurn.bind(self) );
 						}
 					});
 					break;
@@ -601,7 +628,7 @@ game.createClass('AI', {
 		var self = this;
 		// need animation here
 
-		game.scene.addTimer(1000, function(){
+		game.scene.addTimer(10, function(){
 			
 			if(self.GoalThisTurn || self.LostGoalThisTurn){
 				self.goalsprite = new game.Sprite('Goal_home');
