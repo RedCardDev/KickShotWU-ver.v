@@ -93,13 +93,13 @@ game.createScene('WarmUp', {
 		text.addTo(game.scene.stage);
 
 		var tween1 = new game.Tween(text.position);
-		tween1.to({x: 130}, 1000);
+		tween1.to({x: 130}, 10);
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 800}, 1000);
+		tween2.to({x: 800}, 10);
 		tween2.easing(game.Tween.Easing.Back.In );
-		tween2.delay(2000);
+		tween2.delay(20);
 
 		tween2.onComplete(this.PlayerRollSingleDice.bind(this));
 
@@ -117,12 +117,12 @@ game.createScene('WarmUp', {
 		game.dice.setPlayerPosition();
 		game.dice.showsingle();
 		
-		this.addTimer(1000, function(){
+		this.addTimer(10, function(){
 			game.dice.roll();
-			self.addTimer(1000, function() {
+			self.addTimer(10, function() {
 	            game.dice.stopRoll();
 	            self.SetDieValue(true);
-	            self.addTimer(500, function(){
+	            self.addTimer(5, function(){
 		            game.dice.hidesingle();
 	            	self.AIRollSingleDice();
 	        	});
@@ -132,15 +132,15 @@ game.createScene('WarmUp', {
 
 	AIRollSingleDice: function(){
 		var self = this;
-		this.addTimer(1000, function(){
+		this.addTimer(10, function(){
     		game.dice.setAiPosition();
     		game.dice.showsingle();
-    		self.addTimer(1000,function(){
+    		self.addTimer(10,function(){
     			game.dice.roll();
-				self.addTimer(1000, function() {
+				self.addTimer(10, function() {
 		            game.dice.stopRoll();
 		            self.SetDieValue(false);
-		            self.addTimer(500, function(){
+		            self.addTimer(5, function(){
 		            	game.dice.hidesingle();
 		            	self.HAResult();
 		            });
@@ -272,13 +272,21 @@ game.createClass('GameRound', {
 		text.position.set(-400, 300);
 
 		var tween1 = new game.Tween(text.position);
+<<<<<<< HEAD
 		tween1.to({x: 150}, 1000);
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
 		tween2.to({x: 800}, 1000);
+=======
+		tween1.to({x: 150}, 6);
+		tween1.easing( game.Tween.Easing.Back.Out);
+
+		var tween2 = new game.Tween(text.position);
+		tween2.to({x: 800}, 6);
+>>>>>>> origin/master
 		tween2.easing(game.Tween.Easing.Back.In );
-		tween2.delay(2000);
+		tween2.delay(20);
 
 		tween1.chain(tween2);
 
@@ -303,11 +311,11 @@ game.createClass('GameRound', {
 		text.addTo(game.scene.stage);
 
 		var tween1 = new game.Tween(text.position);
-		tween1.to({x: 150 }, 700);
+		tween1.to({x: 150 }, 7);
 
 		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 700 }, 700);
-		tween2.delay(700);
+		tween2.to({x: 700 }, 7);
+		tween2.delay(7);
 
 		tween2.onComplete(function(){
 			game.dice.setPlayerPosition();
@@ -324,11 +332,11 @@ game.createClass('GameRound', {
 		text.addTo(game.scene.stage);
 
 		var tween1 = new game.Tween(text.position);
-		tween1.to({x: 150 }, 700);
+		tween1.to({x: 150 }, 7);
 
 		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 700 }, 700);
-		tween2.delay(700);
+		tween2.to({x: 700 }, 7);
+		tween2.delay(7);
 
 		tween2.onComplete(function(){
 			game.dice.setPlayerPosition();

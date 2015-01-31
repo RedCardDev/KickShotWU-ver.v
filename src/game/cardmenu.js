@@ -2,6 +2,8 @@ game.module(
 	'game.cardmenu'
 ).body(function() {
 
+var SuperSpeed = 1;
+
 game.createClass('CardMenu', {
 	
 	cards: [
@@ -235,34 +237,75 @@ game.createClass('CardMenu', {
 
     	// =======  Left one zoom in ===========
     	if(this.select != 0){
-    		var zoom1 = new game.Tween(this.cards[this.select-1].sprite.scale);
-	    	zoom1.to( {x: 0.01, y: 0.01 }, 500);
+			if (SuperSpeed == 1)
+			{
+				var zoom1 = new game.Tween(this.cards[this.select-1].sprite.scale);
+				zoom1.to( {x: 0.01, y: 0.01 }, 5);
+			}
+			else
+			{
+				var zoom1 = new game.Tween(this.cards[this.select-1].sprite.scale);
+				zoom1.to( {x: 0.01, y: 0.01 }, 500);
+			}
+			
 	    	tweenGroup.add(zoom1);
     	}	    	
 
     	// =======  Middle one move to left ===========
-    	var tween2 = new game.Tween(this.cards[this.select].sprite.position);
-    	tween2.to( {x: 140 }, 500);
-    	var zoom2 = new game.Tween(this.cards[this.select].sprite.scale);
-    	zoom2.to( {x: 0.2, y: 0.2 }, 500);
+		if (SuperSpeed == 1)
+		{
+			var tween2 = new game.Tween(this.cards[this.select].sprite.position);
+			tween2.to( {x: 140 }, 5);
+			var zoom2 = new game.Tween(this.cards[this.select].sprite.scale);
+			zoom2.to( {x: 0.2, y: 0.2 }, 5);
+		}
+		else
+		{
+			var tween2 = new game.Tween(this.cards[this.select].sprite.position);
+			tween2.to( {x: 140 }, 500);
+			var zoom2 = new game.Tween(this.cards[this.select].sprite.scale);
+			zoom2.to( {x: 0.2, y: 0.2 }, 500);
+		}
+		
     	tweenGroup.add(tween2);
     	tweenGroup.add(zoom2);
 
     	// =======  Right one move to middle ===========
-    	var tween3 = new game.Tween(this.cards[this.select+1].sprite.position);
-    	tween3.to( {x: 320 }, 500);
-    	var zoom3 = new game.Tween(this.cards[this.select+1].sprite.scale);
-    	zoom3.to( {x: 0.4, y: 0.4 }, 500);
+		if (SuperSpeed == 1)
+		{
+			var tween3 = new game.Tween(this.cards[this.select+1].sprite.position);
+			tween3.to( {x: 320 }, 5);
+			var zoom3 = new game.Tween(this.cards[this.select+1].sprite.scale);
+			zoom3.to( {x: 0.4, y: 0.4 }, 5);
+		}
+		else
+		{
+			var tween3 = new game.Tween(this.cards[this.select+1].sprite.position);
+			tween3.to( {x: 320 }, 500);
+			var zoom3 = new game.Tween(this.cards[this.select+1].sprite.scale);
+			zoom3.to( {x: 0.4, y: 0.4 }, 500);
+		}
     	tweenGroup.add(tween3);
     	tweenGroup.add(zoom3);
 
     	// ======= Hidden one zoomout to right =======
-    	if(this.select != this.cards.length-2){
-    		var zoom4 = new game.Tween(this.cards[this.select+2].sprite.scale);
-    		zoom4.to( {x: 0.2, y: 0.2 }, 500);
-    		tweenGroup.add(zoom4);    		
-    	}   	
-    	
+		if (SuperSpeed == 1)
+		{
+			if(this.select != this.cards.length-2){
+				var zoom4 = new game.Tween(this.cards[this.select+2].sprite.scale);
+				zoom4.to( {x: 0.2, y: 0.2 }, 5);
+				tweenGroup.add(zoom4);    		
+			}   	
+    	}
+		else
+		{
+			if(this.select != this.cards.length-2){
+				var zoom4 = new game.Tween(this.cards[this.select+2].sprite.scale);
+				zoom4.to( {x: 0.2, y: 0.2 }, 5);
+				tweenGroup.add(zoom4);    		
+			}   	
+    	}
+		
     	
     	tweenGroup.start();
 
@@ -280,33 +323,78 @@ game.createClass('CardMenu', {
     	var tweenGroup = new game.TweenGroup();
 
     	// =======  Hidden one zoom out to left ===========
-    	if(this.select != 1){
-    		var zoom1 = new game.Tween(this.cards[this.select-2].sprite.scale);
-    		zoom1.to( {x: 0.2, y: 0.2 }, 500);
-    		tweenGroup.add(zoom1); 
-    	}
+		if (SuperSpeed == 1)
+		{
+			if(this.select != 1){
+				var zoom1 = new game.Tween(this.cards[this.select-2].sprite.scale);
+				zoom1.to( {x: 0.2, y: 0.2 }, 5);
+				tweenGroup.add(zoom1); 
+			}
+		}
+		else
+		{
+			if(this.select != 1){
+				var zoom1 = new game.Tween(this.cards[this.select-2].sprite.scale);
+				zoom1.to( {x: 0.2, y: 0.2 }, 500);
+				tweenGroup.add(zoom1); 
+			}
+		}
+		
 
     	// =======  Left one move to middle ===========
-    	var tween2 = new game.Tween(this.cards[this.select-1].sprite.position);
-    	tween2.to( {x: 320 }, 500);
-    	var zoom2 = new game.Tween(this.cards[this.select-1].sprite.scale);
-    	zoom2.to( {x: 0.4, y: 0.4 }, 500);
+		if (SuperSpeed == 1)
+		{
+			var tween2 = new game.Tween(this.cards[this.select-1].sprite.position);
+			tween2.to( {x: 320 }, 5);
+			var zoom2 = new game.Tween(this.cards[this.select-1].sprite.scale);
+			zoom2.to( {x: 0.4, y: 0.4 }, 5);
+		}
+		else
+		{
+			var tween2 = new game.Tween(this.cards[this.select-1].sprite.position);
+			tween2.to( {x: 320 }, 500);
+			var zoom2 = new game.Tween(this.cards[this.select-1].sprite.scale);
+			zoom2.to( {x: 0.4, y: 0.4 }, 500);
+		}
+		
     	tweenGroup.add(tween2);
     	tweenGroup.add(zoom2);
 
     	// =======  Middle one move to right ===========
-    	var tween3 = new game.Tween(this.cards[this.select].sprite.position);
-    	tween3.to( {x: 500 }, 500);
-    	var zoom3 = new game.Tween(this.cards[this.select].sprite.scale);
-    	zoom3.to( {x: 0.2, y: 0.2 }, 500);
+		if (SuperSpeed == 1)
+		{
+			var tween3 = new game.Tween(this.cards[this.select].sprite.position);
+			tween3.to( {x: 500 }, 5);
+			var zoom3 = new game.Tween(this.cards[this.select].sprite.scale);
+			zoom3.to( {x: 0.2, y: 0.2 }, 5);
+		}
+		else
+		{
+			var tween3 = new game.Tween(this.cards[this.select].sprite.position);
+			tween3.to( {x: 500 }, 500);
+			var zoom3 = new game.Tween(this.cards[this.select].sprite.scale);
+			zoom3.to( {x: 0.2, y: 0.2 }, 500);
+		}
+		
     	tweenGroup.add(tween3);
     	tweenGroup.add(zoom3);
 
     	// =======  Right one zoom in and hidden ===========
+		
     	if(this.select != this.cards.length-1){
-    		var zoom4 = new game.Tween(this.cards[this.select+1].sprite.scale);
-    		zoom4.to( {x: 0.01, y: 0.01 }, 500);
-    		tweenGroup.add(zoom4);
+			if (SuperSpeed == 1)
+			{	
+				var zoom4 = new game.Tween(this.cards[this.select+1].sprite.scale);
+				zoom4.to( {x: 0.01, y: 0.01 }, 5);
+				tweenGroup.add(zoom4);
+			}
+			else
+			{	
+				var zoom4 = new game.Tween(this.cards[this.select+1].sprite.scale);
+				zoom4.to( {x: 0.01, y: 0.01 }, 500);
+				tweenGroup.add(zoom4);
+			}
+			
     	}
 
     	tweenGroup.start();
@@ -400,7 +488,15 @@ game.createClass('CardMenu', {
     		game.Player.EndTurn();
     	}else{
     		game.Player.LastPick = null;
-    		game.scene.addTimer(1000, game.gameround.AITurn.bind(game.gameround));
+			if (SuperSpeed == 1)
+			{
+				game.scene.addTimer(10, game.gameround.AITurn.bind(game.gameround));
+			}
+			else
+			{
+				game.scene.addTimer(1000, game.gameround.AITurn.bind(game.gameround));
+			}
+			
     	}
     },
 

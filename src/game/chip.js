@@ -2,7 +2,9 @@ game.module(
 	'game.chip'
 )
 .body(function(){
-	
+
+var SuperSpeed = 1;
+
 game.createClass('Chip', {
 
 	Side: null,
@@ -109,7 +111,14 @@ game.createClass('Chip', {
 
 		var tween = new game.Tween(this.chip.position);
 		var Y_axis = this.chipY_axis[this.chipzone + 11].Y_axis;
-		tween.to({y: Y_axis}, 500);
+		if (SuperSpeed == 1)
+		{	
+			tween.to({y: Y_axis}, 500);
+		}
+		else
+		{	
+			tween.to({y: Y_axis}, 5);
+		}
 		tween.start();
 		
 
