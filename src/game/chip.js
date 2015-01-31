@@ -113,11 +113,11 @@ game.createClass('Chip', {
 		var Y_axis = this.chipY_axis[this.chipzone + 11].Y_axis;
 		if (SuperSpeed == 1)
 		{	
-			tween.to({y: Y_axis}, 500);
+			tween.to({y: Y_axis}, 5);
 		}
 		else
 		{	
-			tween.to({y: Y_axis}, 5);
+			tween.to({y: Y_axis}, 500);
 		}
 		tween.start();
 		

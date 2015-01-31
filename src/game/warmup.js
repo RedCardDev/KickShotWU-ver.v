@@ -27,6 +27,8 @@ var dice = null;
 
 var gameround = null;
 
+var SuperSpeed = 1;
+
 game.createScene('WarmUp', {
 
 	Player_die1: 1,
@@ -93,13 +95,34 @@ game.createScene('WarmUp', {
 		text.addTo(game.scene.stage);
 
 		var tween1 = new game.Tween(text.position);
-		tween1.to({x: 130}, 10);
+		if (SuperSpeed == 1)
+		{
+			tween1.to({x: 130}, 10);
+		}
+		else
+		{
+			tween1.to({x: 130}, 1000);
+		}
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 800}, 10);
+		if (SuperSpeed == 1)
+		{
+			tween2.to({x: 800}, 10);
+		}
+		else
+		{
+			tween2.to({x: 800}, 1000);
+		}
 		tween2.easing(game.Tween.Easing.Back.In );
-		tween2.delay(20);
+		if (SuperSpeed == 1)
+		{
+			tween2.delay(20);
+		}
+		else
+		{
+			tween2.delay(20);
+		}
 
 		tween2.onComplete(this.PlayerRollSingleDice.bind(this));
 
@@ -116,37 +139,74 @@ game.createScene('WarmUp', {
 
 		game.dice.setPlayerPosition();
 		game.dice.showsingle();
-		
-		this.addTimer(10, function(){
-			game.dice.roll();
-			self.addTimer(10, function() {
-	            game.dice.stopRoll();
-	            self.SetDieValue(true);
-	            self.addTimer(5, function(){
-		            game.dice.hidesingle();
-	            	self.AIRollSingleDice();
-	        	});
-	        });
-		});			
+		if (SuperSpeed == 1)
+		{
+			this.addTimer(10, function(){
+				game.dice.roll();
+				self.addTimer(10, function() {
+					game.dice.stopRoll();
+					self.SetDieValue(true);
+					self.addTimer(5, function(){
+						game.dice.hidesingle();
+						self.AIRollSingleDice();
+					});
+				});
+			});		
+		}
+		else
+		{
+			this.addTimer(1000, function(){
+				game.dice.roll();
+				self.addTimer(1000, function() {
+					game.dice.stopRoll();
+					self.SetDieValue(true);
+					self.addTimer(500, function(){
+						game.dice.hidesingle();
+						self.AIRollSingleDice();
+					});
+				});
+			});		
+		}
 	},
 
 	AIRollSingleDice: function(){
 		var self = this;
-		this.addTimer(10, function(){
-    		game.dice.setAiPosition();
-    		game.dice.showsingle();
-    		self.addTimer(10,function(){
-    			game.dice.roll();
-				self.addTimer(10, function() {
-		            game.dice.stopRoll();
-		            self.SetDieValue(false);
-		            self.addTimer(5, function(){
-		            	game.dice.hidesingle();
-		            	self.HAResult();
-		            });
-		        });
-    		});
-    	});
+		if (SuperSpeed == 1)
+		{
+			this.addTimer(10, function(){
+				game.dice.setAiPosition();
+				game.dice.showsingle();
+				self.addTimer(10,function(){
+					game.dice.roll();
+					self.addTimer(10, function() {
+						game.dice.stopRoll();
+						self.SetDieValue(false);
+						self.addTimer(5, function(){
+							game.dice.hidesingle();
+							self.HAResult();
+						});
+					});
+				});
+			});
+		}
+		else
+		{
+			this.addTimer(1000, function(){
+				game.dice.setAiPosition();
+				game.dice.showsingle();
+				self.addTimer(1000,function(){
+					game.dice.roll();
+					self.addTimer(1000, function() {
+						game.dice.stopRoll();
+						self.SetDieValue(false);
+						self.addTimer(50, function(){
+							game.dice.hidesingle();
+							self.HAResult();
+						});
+					});
+				});
+			});
+		}
 	},
 
 	SetDieValue: function(IsPlayer){
@@ -240,9 +300,9 @@ game.createClass('GameRound', {
 		if(game.Player.Score == 10 || game.Player.Score > game.AI.Score)
 			console.log('You Win!');
 		else if(game.AI.Score == 10 || game.AI.Score > game.Player.Score)
-			console.log('You Loser!');
+			console.log('You Lose!');
 		else if(game.AI.Score == game.Player.Score)
-			console.log('平手');
+			console.log('You some how managed to tie. This is bad.');
 		else
 			console.log('Unknown Error for final Scores');
 
@@ -273,6 +333,7 @@ game.createClass('GameRound', {
 
 		var tween1 = new game.Tween(text.position);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		tween1.to({x: 150}, 1000);
 		tween1.easing( game.Tween.Easing.Back.Out);
 
@@ -285,8 +346,36 @@ game.createClass('GameRound', {
 		var tween2 = new game.Tween(text.position);
 		tween2.to({x: 800}, 6);
 >>>>>>> origin/master
+=======
+		if (SuperSpeed == 1)
+		{
+			tween1.to({x: 150}, 6);
+		}
+		else
+		{
+			tween1.to({x: 150}, 600);
+		}
+		tween1.easing( game.Tween.Easing.Back.Out);
+
+		var tween2 = new game.Tween(text.position);
+		if (SuperSpeed == 1)
+		{
+			tween2.to({x: 800}, 6);
+		}
+		else
+		{
+			tween2.to({x: 800}, 600);
+		}
+>>>>>>> c62ab675d9f7c10205b50157db29f701c7ce1311
 		tween2.easing(game.Tween.Easing.Back.In );
-		tween2.delay(20);
+		if (SuperSpeed == 1)
+		{
+			tween2.delay(20);
+		}
+		else
+		{
+			tween2.delay(2000);
+		}
 
 		tween1.chain(tween2);
 
@@ -311,11 +400,26 @@ game.createClass('GameRound', {
 		text.addTo(game.scene.stage);
 
 		var tween1 = new game.Tween(text.position);
-		tween1.to({x: 150 }, 7);
+		if (SuperSpeed == 1)
+		{
+			tween1.to({x: 150 }, 7);
+		}
+		else
+		{
+			tween1.to({x: 150 }, 700);
+		}
 
 		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 700 }, 7);
-		tween2.delay(7);
+		if (SuperSpeed == 1)
+		{
+			tween2.to({x: 700 }, 7);
+			tween2.delay(7);
+		}
+		else
+		{
+			tween2.to({x: 700 }, 700);
+			tween2.delay(700);
+		}
 
 		tween2.onComplete(function(){
 			game.dice.setPlayerPosition();
@@ -332,11 +436,26 @@ game.createClass('GameRound', {
 		text.addTo(game.scene.stage);
 
 		var tween1 = new game.Tween(text.position);
-		tween1.to({x: 150 }, 7);
+		if (SuperSpeed == 1)
+		{
+			tween1.to({x: 150 }, 7);
+		}
+		else
+		{
+			tween1.to({x: 150 }, 700);
+		}
 
 		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 700 }, 7);
-		tween2.delay(7);
+		if (SuperSpeed == 1)
+		{
+			tween2.to({x: 700 }, 7);
+			tween2.delay(7);
+		}
+		else
+		{
+			tween2.to({x: 700 }, 700);
+			tween2.delay(700);
+		}
 
 		tween2.onComplete(function(){
 			game.dice.setPlayerPosition();
