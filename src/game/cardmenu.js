@@ -100,9 +100,36 @@ game.createClass('CardMenu', {
 
 		this.initSprite(cards_type_array);
 
-		//game.scene.addObject(this);
+
+		this.CardDes = new game.PIXI.Text('NULL', {
+			font: '40px Comic Sans MS', 
+			align: 'center'
+		});
+		this.CardDes.position.set(40, 380);
+		this.CardDes.visible = false;
+		game.scene.stage.addChild(this.CardDes);
+		game.scene.addObject(this);
 	},
 
+	update: function(){
+		switch(this.cards[this.select].Type){
+			case 1: case 11:
+				this.CardDes.setText('Roll Dice\nAdvance Ball By High Dice\n\nBall Turn Over \nOn Rolling 1 on Either Dice');
+				break;
+			case 2: case 3: case 12: case 13:
+				this.CardDes.setText('Roll Dice\nAdvance Ball By Sum of Dices\n\nBall Turn Over \nIf Not Reach the End Of Zone');
+				break;
+			case 4: case 14:
+				this.CardDes.setText('Roll Dice\nBall Turn Over\nIf No Rolling of 1 \nOn Either Dice');
+				break;
+			case 5: case 6: case 15: case 16:
+				this.CardDes.setText('Must Use The Same Direction\nTo Block GoalShot\n\nRoll Dice\nAdvance The Ball\nBy Sum of Dices');
+				break;
+			default:
+				console.log('Update Error');
+		}
+
+	},
 
 	/* if player call showmenu after AI end the turn, use this show 
 	 * this function is only used for trade button visible update
@@ -128,6 +155,8 @@ game.createClass('CardMenu', {
 		for(var i = 0; i < this.cards.length; i++){
 			this.cards[i].sprite.visible = true;
 		}
+
+		this.CardDes.visible = true;
 	},
 
 	hideMenu: function(){
@@ -143,6 +172,8 @@ game.createClass('CardMenu', {
 		for(var i = 0; i < this.cards.length; i++){
 			this.cards[i].sprite.visible = false;
 		}
+
+		this.CardDes.visible = false;
 	},
 
 	initSprite: function(cards_type_array){

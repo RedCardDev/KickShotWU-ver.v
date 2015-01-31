@@ -334,6 +334,7 @@ game.createClass('GameRound', {
 		var tween1 = new game.Tween(text.position);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		tween1.to({x: 150}, 1000);
 		tween1.easing( game.Tween.Easing.Back.Out);
 
@@ -367,6 +368,13 @@ game.createClass('GameRound', {
 			tween2.to({x: 800}, 600);
 		}
 >>>>>>> c62ab675d9f7c10205b50157db29f701c7ce1311
+=======
+		tween1.to({x: 150}, 600);
+		tween1.easing( game.Tween.Easing.Back.Out);
+
+		var tween2 = new game.Tween(text.position);
+		tween2.to({x: 800}, 600);
+>>>>>>> parent of 130bedb... Revert "Latest version so far"
 		tween2.easing(game.Tween.Easing.Back.In );
 		if (SuperSpeed == 1)
 		{
@@ -380,11 +388,15 @@ game.createClass('GameRound', {
 		tween1.chain(tween2);
 
 		if(this.PlayerGetLastGoal)	{
+			game.Player.switchToDeffence();
+			game.AI.switchToOffence();
 			text.setText(str2);
 			tween2.onComplete( function(){
 				game.AI.RollDueDice(null);
 			});		
 		}else{
+			game.AI.switchToDeffence();
+			game.Player.switchToOffence();
 			tween2.onComplete( function(){
 				game.Player.RollDueDice(null);
 			});	

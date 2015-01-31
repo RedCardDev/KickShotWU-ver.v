@@ -32,24 +32,8 @@ game.createClass('AI', {
 	AwayLeftBlock: 15,
 	AwayRightBlock: 16,
 
-	cards: [],	
-
-	/* this part is easy use to determine if AI hold this kind of card,
-	 * which will help to make the code much simple!!!!!!!!
-	 */
-	HoldReferee: [],
-	HoldHomePass: [],
-	HoldHomeLeftShot: [],
-	HoldHomeRightShot: [],
-	HoldHomeIntercept: [],
-	HoldHomeLeftBlock: [],
-	HoldHomeRightBlock: [],
-	HoldAwayPass: [],
-	HoldAwayLeftShot: [],
-	HoldAwayRightShot: [],
-	HoldAwayIntercept: [],
-	HoldAwayLeftBlock: [],
-	HoldAwayRightBlock: [],
+	cards: [],
+	RefereeCards: [],	
 
 	LastPick: null,	// hold last card that AI used
 
@@ -57,6 +41,7 @@ game.createClass('AI', {
 	LostGoalThisTurn: false,
 
 	phase: null,
+
 
 	init: function(HomeSide){
 		console.log('Current AI side:' + HomeSide);
@@ -77,18 +62,23 @@ game.createClass('AI', {
 		// push the position of all the cards to each array that hold this type
 		for(var i = 0; i < this.cards.length; i++){
 			console.log('Cards['+i+']: '+ this.cards[i]);
-			this.pushHold(this.cards[i], i);
 		}
 
 		var text1 = new game.BitmapText(this.Side, {font: 'Foo'});
 		text1.position.set(10, 10);
 
+		this.scoreText = new game.BitmapText( ' AI: '+this.Score, {
+			font: 'Foo'
+		});
+
+		this.scoreText.position.set(450, 80);
+
 		this.phase.position.set(450, 10);
 
 		text1.addTo(game.scene.stage);
+		this.scoreText.addTo(game.scene.stage);
 		this.phase.addTo(game.scene.stage);
-		game.scene.addObject(this);
-		
+		game.scene.addObject(this);	
 	},
 
 	homeAI: function(){
@@ -103,8 +93,7 @@ game.createClass('AI', {
 		}
 		// then 2 defence cards
 		this.cards.push(~~Math.randomBetween(4, 7));
-		this.cards.push(~~Math.randomBetween(4, 7));
-		
+		this.cards.push(~~Math.randomBetween(4, 7));		
 	},
 
 	awayAI: function(){
@@ -120,154 +109,6 @@ game.createClass('AI', {
 		// then 2 defence cards
 		this.cards.push(~~Math.randomBetween(14, 17));
 		this.cards.push(~~Math.randomBetween(14, 17));
-
-	},
-
-	pushHold: function(cardType, position){
-		switch(cardType){
-			case 1: this.HoldHomePass.push(position);	break; 
-			case 2: this.HoldHomeLeftShot.push(position);	break; 
-			case 3: this.HoldHomeRightShot.push(position);	break; 
-			case 4: this.HoldHomeIntercept.push(position);	break; 
-			case 5: this.HoldHomeLeftBlock.push(position);	break; 
-			case 6: this.HoldHomeRightBlock.push(position);	break; 
-			case 11: this.HoldAwayPass.push(position);		break; 
-			case 12: this.HoldAwayLeftShot.push(position);	break; 
-			case 13: this.HoldAwayRightShot.push(position);	break; 
-			case 14: this.HoldAwayIntercept.push(position);	break; 
-			case 15: this.HoldAwayLeftBlock.push(position);	break; 
-			case 16: this.HoldAwayRightBlock.push(position);	break; 
-			default: console.log('Undefined Card Type!');		break;
-		}
-	},
-
-	popHold: function(position){
-		var found = false;
-		var i;
-		switch(this.cards[position]){
-			case 0: this.HoldReferee.pop();	break; 
-			case 1: 
-				i = 0;
-				while(!found){
-					if(this.HoldHomePass[i] == position){
-						delete this.HoldHomePass[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 2:
-				i = 0;
-				while(!found){
-					if(this.HoldHomeLeftShot[i] == position){
-						delete this.HoldHomeLeftShot[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 3: 
-				i = 0;
-				while(!found){
-					if(this.HoldHomeRightShot[i] == position){
-						delete this.HoldHomeRightShot[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 4:
-				i = 0;
-				while(!found){
-					if(this.HoldHomeIntercept[i] == position){
-						delete this.HoldHomeIntercept[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 5: 
-				i = 0;
-				while(!found){
-					if(this.HoldHomeLeftBlock[i] == position){
-						delete this.HoldHomeLeftBlock[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 6:
-				i = 0;
-				while(!found){
-					if(this.HoldHomeRightBlock[i] == position){
-						delete this.HoldHomeRightBlock[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 11: 
-				i = 0;
-				while(!found){
-					if(this.HoldAwayPass[i] == position){
-						delete this.HoldAwayPass[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 12:
-				i = 0;
-				while(!found){
-					if(this.HoldAwayLeftShot[i] == position){
-						delete this.HoldAwayLeftShot[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 13: 
-				i = 0;
-				while(!found){
-					if(this.HoldAwayRightShot[i] == position){
-						delete this.HoldAwayRightShot[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 14:
-				i = 0;
-				while(!found){
-					if(this.HoldAwayIntercept[i] == position){
-						delete this.HoldAwayIntercept[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 15: 
-				i = 0;
-				while(!found){
-					if(this.HoldAwayLeftBlock[i] == position){
-						delete this.HoldAwayLeftBlock[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-			case 16:
-				i = 0;
-				while(!found){
-					if(this.HoldAwayRightBlock[i] == position){
-						delete this.HoldAwayRightBlock[i];
-						found = true;
-					}
-					i++;
-				}
-				break;
-		}
-			
 	},
 
 	switchToOffence: function(){
@@ -293,7 +134,7 @@ game.createClass('AI', {
 	},
 
 	RemainThinking: function(text, i){
-		console.log(i);
+		//console.log(i);
 		var self = this;
 		if(i == 13){
 			text.visible = false;
@@ -341,7 +182,6 @@ game.createClass('AI', {
 		// will have smart trade later, use random so far
 		var position = ~~Math.randomBetween(0,6);
 		this.cards[position] = null;
-		this.popHold(position);	// delete the traded card in hold stack
 		this.DrawCard(position);	// then recover the card
 		return position;
 	},
@@ -349,7 +189,6 @@ game.createClass('AI', {
 	DrawCard: function(position){
 		var type = this.pile.DrawCard();
 		this.cards[position] = type;
-		this.pushHold(type, position);
 
 		// testing
 			console.log();
@@ -364,8 +203,19 @@ game.createClass('AI', {
 	},
 
 	DrawRefereeCard: function(){
-		this.HoldReferee.push(game.RefereePile.Draw());
+		this.RefereeCards.push(game.RefereePile.Draw());
 		console.log('AI Draw a Referee card');
+	},
+
+	SearchCard: function(type){
+		var position = null;
+		for(var i = 0; i < this.cards.length-1; i++){
+			if(this.cards[i] == type){
+				position = i;
+				i = this.cards.length-1;
+			}
+		}
+		return position;	// return null means didnt find this type
 	},
 
 	/*
@@ -375,33 +225,29 @@ game.createClass('AI', {
 	DealOffence: function(){
 		console.log('AI Dealing Offence Phase');
 		var position = null;
-		var r = ~~Math.randomBetween(-1, 5);	
+		var tmp;
+		var r = ~~Math.randomBetween(2, 6);
 		if(game.chip.chipzone > r){
 			/* if the chip is located randomly between this field,
 			 * check if hold shot cards
 			 * If so, store the position value and pop it from hold stack
 			 */
 			/* note, we dont need if statement for Home/Away */
-			if(this.HoldHomeLeftShot.length > 0){
-				position = this.HoldHomeLeftShot[this.HoldHomeLeftShot.length-1];
-				this.HoldHomeLeftShot.pop();
+			if((tmp = this.SearchCard(this.HomeLeftShot)) != null){
+				position = tmp;
 				console.log('Pick LeftShot(Home)');
-			}else if(this.HoldHomeRightShot.length > 0){
-				position = this.HoldHomeRightShot[this.HoldHomeRightShot.length-1];
-				this.HoldHomeRightShot.pop();
+			}else if((tmp = this.SearchCard(this.HomeRightShot)) != null){
+				position = tmp;
 				console.log('Pick RightShot(Home)');
 			}
 
-			if(this.HoldAwayLeftShot.length > 0){
-				position = this.HoldAwayLeftShot[this.HoldAwayLeftShot.length-1];
-				this.HoldAwayLeftShot.pop();
+			if((tmp = this.SearchCard(this.AwayLeftShot)) != null){
+				position = tmp;
 				console.log('Pick LeftShot(Away)');
-			}else if(this.HoldAwayRightShot.length > 0){
-				position = this.HoldAwayRightShot[this.HoldAwayRightShot.length-1];
-				this.HoldAwayRightShot.pop();
+			}else if((tmp = this.SearchCard(this.AwayRightShot)) != null){
+				position = tmp;
 				console.log('Pick RightShot(Away)');
 			}
-
 			/*	If not, skip current if statement 
 			 *  and check if hold pass card
 			 */
@@ -411,20 +257,17 @@ game.createClass('AI', {
 			/* 	if AI didnt use shot cards, check pass
 			 *	If so, store the position value and pop it from hold stack
 			 */
-			if(this.HoldHomePass.length > 0){
-				position = this.HoldHomePass[this.HoldHomePass.length-1];
-				this.HoldHomePass.pop();
-				console.log('Pick Pass(Home)');				
+			if((tmp = this.SearchCard(this.HomePass)) != null){
+				position = tmp;
+				console.log('Pick Pass(Home)');		
 			}
 
-			if(this.HoldAwayPass.length > 0){
-				position = this.HoldAwayPass[this.HoldAwayPass.length-1];
-				this.HoldAwayPass.pop();
-				console.log('Pick Pass(Away)');
+			if((tmp = this.SearchCard(this.AwayPass)) != null){
+				position = tmp;
+				console.log('Pick Pass(Away)');	
 			}
 		}// else use card or leave position as null that we didnt use card
 
-		
 		if(position == null){
 			/*	If AI dont have card avaiable to use so far
 			 * 	Randomly trade a card so far,
@@ -432,16 +275,14 @@ game.createClass('AI', {
 			 *  if not, check referee later
 			 */
 			console.log('No Card To Use, try trade card!');
-			var tmp_p = this.TradeCard();
-			if(this.cards[tmp_p] == 1 || this.cards[tmp_p] == 11){
-				position = tmp_p;
-				this.popHold(position);
-			}else if((this.cards[tmp_p] == 2 || this.cards[tmp_p] == 12 ||
-					  this.cards[tmp_p] == 3 || this.cards[tmp_p] == 13) 
+			tmp = this.TradeCard();
+			if(this.cards[tmp] == 1 || this.cards[tmp] == 11){
+				position = tmp;
+			}else if((this.cards[tmp] == 2 || this.cards[tmp] == 12 ||
+					  this.cards[tmp] == 3 || this.cards[tmp] == 13) 
 					  && game.chip.chipzone > r)
 			{
-				position = tmp_p;
-				this.popHold(position);
+				position = tmp;
 			}else
 				console.log('Still no card to use after trade card');
 		}
@@ -453,27 +294,25 @@ game.createClass('AI', {
 			this.useCard(position);
 		}else{
 			/* check referee if still no card to use */
-			if(this.HoldReferee.length > 0)
-				useRefereeCard();
+			if(this.RefereeCards.length > 0)
+				this.useRefereeCard();
 			else{
 				this.LastPick = null;
 				this.EndTurn();
 			}
 		}
-
 	},
 
 	TryIntercept: function(){
 		var position = null;
-		if(this.HoldHomeIntercept.length > 0){
-			position = this.HoldHomeIntercept[this.HoldHomeIntercept.length-1];
-			this.HoldHomeIntercept.pop();
+		var tmp;
+		if((tmp = this.SearchCard(this.HomeIntercept)) != null){
+			position = tmp;
 			console.log('Pick Intercept(Home)');
 		}
 
-		if(this.HoldAwayIntercept.length > 0){
-			position = this.HoldAwayIntercept[this.HoldAwayIntercept.length-1];
-			this.HoldAwayIntercept.pop();
+		if((tmp = this.SearchCard(this.AwayIntercept)) != null){
+			position = tmp;
 			console.log('Pick Intercept(Away)');
 		}
 
@@ -482,13 +321,12 @@ game.createClass('AI', {
 			 *	trade card to see if AI can get it
 			 */
 			console.log('No Card To Use, try trade card!');
-			var tmp_p = this.TradeCard();
-			if(this.cards[tmp_p] == this.HomeIntercept || 
-			   this.cards[tmp_p] == this.AwayIntercept)
+			var tmp = this.TradeCard();
+			if(this.cards[tmp] == this.HomeIntercept || 
+			   this.cards[tmp] == this.AwayIntercept)
 			{
 				console.log('Succeed to trade and get intercept');
-				position = tmp_p;
-				this.popHold(position);
+				position = tmp;
 			}
 		}
 
@@ -496,52 +334,55 @@ game.createClass('AI', {
 			/*	If we finally got one card, use it.	 */
 			this.useCard(position);
 		}else{
-			if(this.HoldReferee.length > 0)
-				useRefereeCard();
+			if(this.RefereeCards.length > 0)
+				this.useRefereeCard();
 			else{
 				this.LastPick = null;
 				this.EndTurn();
 			}
 		}
-
 	},
 
 	TryGoalBlock: function(){
 		var position = null;
+		var tmp;
 		var PLP = game.Player.LastPick;
 
-		if( PLP == this.HomeLeftShot && this.HoldAwayLeftBlock.length > 0){
-			position = this.HoldAwayLeftBlock[this.HoldAwayLeftBlock.length-1];
-			this.HoldAwayLeftBlock.pop();
+		if( PLP == this.HomeLeftShot &&
+			(tmp = this.SearchCard(this.AwayLeftBlock)) != null){
+			position = tmp;
+			console.log('Pick LeftBlock(Away)');
 		}
 
-		if( PLP == this.HomeLeftShot && this.HoldAwayRightBlock.length > 0){
-			position = this.HoldAwayRightBlock[this.HoldAwayRightBlock.length-1];
-			this.HoldAwayRightBlock.pop();
+		if( PLP == this.HomeRightShot &&
+			(tmp = this.SearchCard(this.AwayRightBlock)) != null){
+			position = tmp;
+			console.log('Pick RightBlock(Away)');
 		}
 
-		if( PLP == this.AwayLeftShot && this.HoldHomeLeftBlock.length > 0){
-			position = this.HoldHomeLeftBlock[this.HoldHomeLeftBlock.length-1];
-			this.HoldHomeLeftBlock.pop();
+		if( PLP == this.AwayLeftShot &&
+			(tmp = this.SearchCard(this.HomeLeftBlock)) != null){
+			position = tmp;
+			console.log('Pick LeftBlock(Home)');
 		}
 
-		if( PLP == this.AwayRightShot && this.HoldHomeRightBlock.length > 0){
-			position = this.HoldHomeRightBlock[this.HoldHomeRightBlock.length-1];
-			this.HoldHomeRightBlock.pop();
+		if( PLP == this.AwayRightShot &&
+			(tmp = this.SearchCard(this.HomeRightBlock)) != null){
+			position = tmp;
+			console.log('Pick RightBlock(Home)');
 		}
-		
+
 		if(position == null){
 			/*	If AI dont hold specific block card, 
 			 *	trade card to see if AI can get it
 			 */
-			var tmp_p = this.TradeCard();
-			if( (PLP == this.HomeLeftShot && this.cards[tmp_p] == this.AwayLeftBlock) 	||
-				(PLP == this.HomeRightShot && this.cards[tmp_p] == this.AwayRightBlock) ||
-				(PLP == this.AwayLeftShot && this.cards[tmp_p] == this.HomeLeftBlock) 	||
-				(PLP == this.AwayRightShot && this.cards[tmp_p] == this.HomeRightBlock) )
+			var tmp = this.TradeCard();
+			if( (PLP == this.HomeLeftShot && this.cards[tmp] == this.AwayLeftBlock) 	||
+				(PLP == this.HomeRightShot && this.cards[tmp] == this.AwayRightBlock) ||
+				(PLP == this.AwayLeftShot && this.cards[tmp] == this.HomeLeftBlock) 	||
+				(PLP == this.AwayRightShot && this.cards[tmp] == this.HomeRightBlock) )
 			{
-				position = tmp_p;
-				this.popHold(position);
+				position = tmp;
 			}// else leave position null
 		}
 
@@ -558,7 +399,6 @@ game.createClass('AI', {
 
 			this.EndTurn();
 		}
-
 	},
 
 	useCard: function(position){
@@ -762,6 +602,7 @@ game.createClass('AI', {
 		this.GoalThisTurn = true;
 		game.gameround.PlayerGetLastGoal = false;
 		this.Score++;
+		this.scoreText.setText(' AI: '+this.Score);
 	},
 
 	LostGoal: function(){
@@ -769,6 +610,7 @@ game.createClass('AI', {
 		this.LostGoalThisTurn = true;
 		game.gameround.PlayerGetLastGoal = true;
 		game.Player.Score++;
+		game.Player.scoreText.setText('You: '+game.Player.Score);
 	},
 
 	checkGoal: function(){
@@ -788,31 +630,36 @@ game.createClass('AI', {
 
 <<<<<<< HEAD
 		game.scene.addTimer(1000, function(){
+<<<<<<< HEAD
 			var goalsprite = new game.Sprite('Goal_home');
 =======
 		game.scene.addTimer(10, function(){
 >>>>>>> origin/master
+=======
+>>>>>>> parent of 130bedb... Revert "Latest version so far"
 			
-			if( ( self.GoalThisTurn 	&& self.Side == 'Away' ) ||
-				( self.LostGoalThisTurn && self.Side == 'Home' )){
-				goalsprite = new game.Sprite('Goal_away');					
+			if(self.GoalThisTurn || self.LostGoalThisTurn){
+				self.goalsprite = new game.Sprite('Goal_home');
+				if( (self.GoalThisTurn && self.Side == 'Away')||
+					(self.LostGoalThisTurn && self.Side == 'Home') )
+					self.goalsprite.setTexture('Goal_away');
+
+				self.goalsprite.anchor.set(0.5, 0.5);
+				self.goalsprite.position.set(320, 480);
+				self.goalsprite.interactive = true;
+				self.goalsprite.click = self.goalsprite.tap = function(){
+					self.goalsprite.visible = false;
+					game.gameround.Rounding();
+				};
+				game.scene.stage.addChild(self.goalsprite);
 			}else{
-				goalsprite.visible = false;
 				game.gameround.PlayerTurn();
 			}
 
-			goalsprite.anchor.set(0.5, 0.5);
-			goalsprite.position.set(320, 480);
-			goalsprite.interactive = true;
-			goalsprite.click = goalsprite.tap = function(){
-				goalsprite.visible = false;
-				game.gameround.Rounding();
-			};
-			game.scene.stage.addChild(goalsprite);
+				
 		});
 			
 	}
-
 });
 
 });

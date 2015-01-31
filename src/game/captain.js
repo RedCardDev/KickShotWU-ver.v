@@ -62,11 +62,18 @@ game.createClass('Captain', {
 		this.cardmenu = new game.CardMenu(this.cards);
 
 		var text1 = new game.BitmapText( this.Side, {font: 'Foo'} );
-		text1.position.set(10, 850);
+		text1.position.set(10, 890);
 
-		this.phase.position.set(450, 850);
+		this.scoreText = new game.BitmapText( 'You: '+this.Score, {
+			font: 'Foo'
+		});
+
+		this.scoreText.position.set(450, 830);
+
+		this.phase.position.set(450, 890);
 
 		text1.addTo(game.scene.stage);
+		this.scoreText.addTo(game.scene.stage);
 		this.phase.addTo(game.scene.stage);
 		game.scene.addObject(this);	
 	},
@@ -264,6 +271,7 @@ game.createClass('Captain', {
 		console.log('Player Pass To Goal');
 		this.GoalThisTurn = true;
 		this.Score++;
+		this.scoreText.setText('You: '+this.Score);
 		game.gameround.PlayerGetLastGoal = true;
 	},
 
@@ -271,6 +279,7 @@ game.createClass('Captain', {
 		console.log('AI Shot To Goal');
 		this.LostGoalThisTurn = true;
 		game.AI.Score++;
+		game.AI.scoreText.setText(' AI: '+game.AI.Score);
 		game.gameround.PlayerGetLastGoal = false;
 	},
 
@@ -279,24 +288,26 @@ game.createClass('Captain', {
 	},
 
 	EndTurn: function(){
-		var goalsprite = new game.Sprite('Goal_home');
-		
-		if(( this.GoalThisTurn 		&& this.Side == 'Away') ||
-		   ( this.LostGoalThisTurn  && this.Side == 'Home') )
-		{
-			goalsprite = new game.Sprite('Goal_away');
+		var self = this;
+		if(this.GoalThisTurn || this.LostGoalThisTurn){
+			this.goalsprite = new game.Sprite('Goal_home');
+			if( (this.GoalThisTurn && this.Side == 'Away')||
+				(this.LostGoalThisTurn && this.Side == 'Home') )
+				this.goalsprite.setTexture('Goal_away');
+
+			this.goalsprite.anchor.set(0.5, 0.5);
+			this.goalsprite.position.set(320, 480);
+			this.goalsprite.interactive = true;
+			this.goalsprite.click = this.goalsprite.tap = function(){
+				self.goalsprite.visible = false;
+				game.gameround.Rounding();
+			};
+			game.scene.stage.addChild(this.goalsprite);
 		}else{
-			goalsprite.visible = false;
 			game.gameround.AITurn();
 		}	
-		goalsprite.anchor.set(0.5, 0.5);
-		goalsprite.position.set(320, 480);
-		goalsprite.interactive = true;
-		goalsprite.click = goalsprite.tap = function(){
-			goalsprite.visible = false;
-			game.gameround.Rounding();
-		};
-		game.scene.stage.addChild(goalsprite);
+
+			
 	},
 
 	// once goaled and before kickoff, reset some value here
