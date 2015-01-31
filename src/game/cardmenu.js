@@ -185,7 +185,7 @@ game.createClass('CardMenu', {
 			this.cards[i].sprite.visible = false;
 			game.scene.stage.addChild(this.cards[i].sprite);	
 		}	
-
+		// these are the initial size/positions 
 		// 1st card position and size
 		this.cards[0].sprite.position.set(140, 180);
     	this.cards[0].sprite.scale.set(0.01, 0.01);

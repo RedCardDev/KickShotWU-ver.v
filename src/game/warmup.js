@@ -58,7 +58,7 @@ game.createScene('WarmUp', {
 		var self = this;
 
 		// =================
-		var StartText = new game.BitmapText('Let\'s Start', { font: 'Foo' });
+		var StartText = new game.BitmapText('Let\'s StartTEST', { font: 'Foo' });
 		StartText.position.set(200, 500);
 		var StartJudge = new game.Sprite('lion', 320, 400, {
 			anchor: {x: 0.5, y: 0.5},
@@ -74,7 +74,7 @@ game.createScene('WarmUp', {
 		};
 		StartJudge.tap = StartJudge.click = function(){
 			StartJudge.visible = false;
-			StartText.setText();
+			StartText.setText('the text is still here'); // Todo: destroy this 
 
 			self.HomeAway();				
 		};
