@@ -16,6 +16,8 @@ game.module(
 )
 .body(function(){
 
+var SuperSpeed = 1;
+
 /*	In order to call these value easily,
  *	set them to global value as game.***
  */
@@ -26,8 +28,6 @@ var chip = null;
 var dice = null;
 
 var gameround = null;
-
-var SuperSpeed = 1;
 
 game.createScene('WarmUp', {
 
@@ -103,6 +103,7 @@ game.createScene('WarmUp', {
 		{
 			tween1.to({x: 130}, 1000);
 		}
+		
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
@@ -114,15 +115,18 @@ game.createScene('WarmUp', {
 		{
 			tween2.to({x: 800}, 1000);
 		}
+		
 		tween2.easing(game.Tween.Easing.Back.In );
+		
 		if (SuperSpeed == 1)
 		{
 			tween2.delay(20);
 		}
 		else
 		{
-			tween2.delay(20);
+			tween2.delay(2000);
 		}
+		
 
 		tween2.onComplete(this.PlayerRollSingleDice.bind(this));
 
@@ -139,6 +143,7 @@ game.createScene('WarmUp', {
 
 		game.dice.setPlayerPosition();
 		game.dice.showsingle();
+		
 		if (SuperSpeed == 1)
 		{
 			this.addTimer(10, function(){
@@ -151,7 +156,7 @@ game.createScene('WarmUp', {
 						self.AIRollSingleDice();
 					});
 				});
-			});		
+			});	
 		}
 		else
 		{
@@ -165,14 +170,15 @@ game.createScene('WarmUp', {
 						self.AIRollSingleDice();
 					});
 				});
-			});		
+			});	
 		}
+		
 	},
 
-	AIRollSingleDice: function(){
-		var self = this;
-		if (SuperSpeed == 1)
-		{
+	if (SuperSpeed == 1)
+	{
+		AIRollSingleDice: function(){
+			var self = this;
 			this.addTimer(10, function(){
 				game.dice.setAiPosition();
 				game.dice.showsingle();
@@ -188,9 +194,12 @@ game.createScene('WarmUp', {
 					});
 				});
 			});
-		}
-		else
-		{
+		},
+	}
+	else
+	{
+		AIRollSingleDice: function(){
+			var self = this;
 			this.addTimer(1000, function(){
 				game.dice.setAiPosition();
 				game.dice.showsingle();
@@ -199,15 +208,15 @@ game.createScene('WarmUp', {
 					self.addTimer(1000, function() {
 						game.dice.stopRoll();
 						self.SetDieValue(false);
-						self.addTimer(50, function(){
+						self.addTimer(500, function(){
 							game.dice.hidesingle();
 							self.HAResult();
 						});
 					});
 				});
 			});
-		}
-	},
+		},
+	}
 
 	SetDieValue: function(IsPlayer){
 		if(IsPlayer)	this.Player_die1 = game.dice.value1;
@@ -302,7 +311,7 @@ game.createClass('GameRound', {
 		else if(game.AI.Score == 10 || game.AI.Score > game.Player.Score)
 			console.log('You Lose!');
 		else if(game.AI.Score == game.Player.Score)
-			console.log('You some how managed to tie. This is bad.');
+			console.log('平手');
 		else
 			console.log('Unknown Error for final Scores');
 
@@ -340,6 +349,7 @@ game.createClass('GameRound', {
 		{
 			tween1.to({x: 150}, 600);
 		}
+		
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
@@ -408,6 +418,7 @@ game.createClass('GameRound', {
 			tween2.to({x: 700 }, 700);
 			tween2.delay(700);
 		}
+		
 
 		tween2.onComplete(function(){
 			game.dice.setPlayerPosition();
@@ -432,6 +443,7 @@ game.createClass('GameRound', {
 		{
 			tween1.to({x: 150 }, 700);
 		}
+		
 
 		var tween2 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
