@@ -43,7 +43,7 @@ game.createClass('Captain', {
 		console.log('Current player side:' + HomeSide);
 		if(HomeSide){
 			this.Side = 'Home';
-			this.phase = new game.BitmapText('Offense', {font: 'Foo'});
+			this.phase = new game.BitmapText('Offence', {font: 'Foo'});
 			this.switchToOffence();
 			this.homeCaptain();
 			this.pile = new game.Pile('Home', this.cards);

@@ -96,7 +96,7 @@ game.createScene('Main', {
             this.charSprite = new game.Sprite(this.cycle[this.charIndex]).addTo(this.stage);
             this.charSprite.anchor.set(0.5, 0.5);
             this.charSprite.center();
-            this.charSprite.x = -200;  // Todo: change this to half screen width instead of straight number
+            this.charSprite.x = -200;
             this.charSprite.scale.set(1.75, 1.75);
         } else {
             this.charSprite.x = -200;

@@ -60,7 +60,7 @@ game.createScene('WarmUp', {
 		var self = this;
 
 		// =================
-		var StartText = new game.BitmapText('Let\'s StartTEST', { font: 'Foo' });
+		var StartText = new game.BitmapText('Let\'s Start', { font: 'Foo' });
 		StartText.position.set(200, 500);
 		var StartJudge = new game.Sprite('lion', 320, 400, {
 			anchor: {x: 0.5, y: 0.5},
@@ -76,7 +76,7 @@ game.createScene('WarmUp', {
 		};
 		StartJudge.tap = StartJudge.click = function(){
 			StartJudge.visible = false;
-			StartText.setText('the text is still here'); // Todo: destroy this 
+			StartText.setText();
 
 			self.HomeAway();				
 		};
@@ -332,22 +332,6 @@ game.createClass('GameRound', {
 		text.position.set(-400, 300);
 
 		var tween1 = new game.Tween(text.position);
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-		tween1.to({x: 150}, 1000);
-		tween1.easing( game.Tween.Easing.Back.Out);
-
-		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 800}, 1000);
-=======
-		tween1.to({x: 150}, 6);
-		tween1.easing( game.Tween.Easing.Back.Out);
-
-		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 800}, 6);
->>>>>>> origin/master
-=======
 		if (SuperSpeed == 1)
 		{
 			tween1.to({x: 150}, 6);
@@ -367,14 +351,6 @@ game.createClass('GameRound', {
 		{
 			tween2.to({x: 800}, 600);
 		}
->>>>>>> c62ab675d9f7c10205b50157db29f701c7ce1311
-=======
-		tween1.to({x: 150}, 600);
-		tween1.easing( game.Tween.Easing.Back.Out);
-
-		var tween2 = new game.Tween(text.position);
-		tween2.to({x: 800}, 600);
->>>>>>> parent of 130bedb... Revert "Latest version so far"
 		tween2.easing(game.Tween.Easing.Back.In );
 		if (SuperSpeed == 1)
 		{

@@ -628,15 +628,7 @@ game.createClass('AI', {
 		var self = this;
 		// need animation here
 
-<<<<<<< HEAD
-		game.scene.addTimer(1000, function(){
-<<<<<<< HEAD
-			var goalsprite = new game.Sprite('Goal_home');
-=======
 		game.scene.addTimer(10, function(){
->>>>>>> origin/master
-=======
->>>>>>> parent of 130bedb... Revert "Latest version so far"
 			
 			if(self.GoalThisTurn || self.LostGoalThisTurn){
 				self.goalsprite = new game.Sprite('Goal_home');
