@@ -180,8 +180,8 @@ game.createClass('Captain', {
 		var die1 = game.dice.value1;
 		var die2 = game.dice.value2;
 		console.log();
-		console.log('dice1: '+die1);
-		console.log('dice2: '+die2);
+		// console.log('dice1: '+die1);
+		// console.log('dice2: '+die2);
 
 		if(i == null){
 			// kickoff

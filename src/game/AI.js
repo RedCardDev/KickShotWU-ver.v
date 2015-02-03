@@ -512,8 +512,17 @@ game.createClass('AI', {
 
 		if(i == null){
 			// kickoff
-			game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
-			
+
+			// Add 1 to dice roll when doubles are rolled
+			if(game.dice.sameRoll)
+			{
+				game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) + 1);
+			} 
+			else
+			{
+				game.chip.moveChip( Math.max(game.dice.value1, game.dice.value2) );
+			}
+
 			game.scene.addTimer( 5, game.gameround.PlayerTurn.bind(game.gameround) );			
 		}else{
 			this.LastPick = this.cards[i];

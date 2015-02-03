@@ -8,6 +8,7 @@ game.createClass('Dice', {
     rolling: false,
     value1: 1,
     value2: 1,
+    sameRoll: false,
     timing: false,
 
     init: function() {
@@ -25,8 +26,19 @@ game.createClass('Dice', {
         if (this.rolling && !this.timing) {
             var self = this;
             this.timing = true;
+            this.sameRoll = false;
             this.value1 = ~~Math.randomBetween(1, 7);
             this.value2 = ~~Math.randomBetween(1, 7);
+            if(this.value1 == this.value2)
+            {
+            	this.sameRoll = true;
+            }
+
+            // Print the dice roll
+            console.log('value1: ' + this.value1);
+            console.log('value2: ' + this.value2);
+            console.log('sameRoll: ' + this.sameRoll);
+
             this.die1.setTexture('dice' + this.value1);
             this.die2.setTexture('dice' + this.value2);
 			if (SuperSpeed == 1)
@@ -45,6 +57,7 @@ game.createClass('Dice', {
         }
     },
 
+    // Functions for rendering 2 die
     showdue: function() {
 		if (SuperSpeed == 1)
 		{
@@ -116,9 +129,11 @@ game.createClass('Dice', {
         this.die2.y = 200;
     },
 
+    // not used
     reset: function() {
         this.value1 = 1;
         this.value2 = 1;
+        this.sameRoll = false;
         this.die1.setTexture('dice1');
         this.die2.setTexture('dice1');
     }
