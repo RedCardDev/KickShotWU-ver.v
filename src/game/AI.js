@@ -3,7 +3,8 @@ game.module(
 )
 .body(function() {
 
-var SuperSpeed = 1;
+var SuperSpeed = 100;
+var Debug = 3; // 0 None, 1 Errors, 2 Major events, 3 Minor events
     
 /*
  *	A player class will hold all the current infomation for this player
@@ -44,7 +45,10 @@ game.createClass('AI', {
 
 
 	init: function(HomeSide){
-		console.log('Current AI side:' + HomeSide);
+		if (Debug >= 2)
+		{
+			console.log('Current AI side:' + HomeSide);
+		}
 		if(HomeSide){
 			this.Side = 'Home';
 			this.phase = new game.BitmapText('Offence', {font: 'Foo'});
@@ -146,14 +150,7 @@ game.createClass('AI', {
 			else if(i % 4 == 3)	text.setText('AI Is Thinking . . .');
 
 			i++;
-			if (SuperSpeed == 1)
-			{
-				game.scene.addTimer(2, self.RemainThinking.bind(self, text, i));
-			}
-			else
-			{
-				game.scene.addTimer(250, self.RemainThinking.bind(self, text, i));
-			}
+			game.scene.addTimer(250/SuperSpeed, self.RemainThinking.bind(self, text, i));
 		}
 	},
 
@@ -192,19 +189,28 @@ game.createClass('AI', {
 
 		// testing
 			console.log();
-			console.log('Draw a new Card at: '+ position);
-			console.log('NewCard: '+ this.cards[position]);
+			if (Debug >= 2)
+			{
+				console.log('Draw a new Card at: '+ position);
+				console.log('NewCard: '+ this.cards[position]);
+			}
 			console.log();
 		// testing
 			for(var i = 0; i < this.cards.length; i++){
-				console.log('Cards['+i+']: '+ this.cards[i]);
+				if (Debug >= 3)
+				{
+					console.log('Cards['+i+']: '+ this.cards[i]);
+				}
 			}
 
 	},
 
 	DrawRefereeCard: function(){
 		this.RefereeCards.push(game.RefereePile.Draw());
-		console.log('AI Draw a Referee card');
+		if (Debug >= 2)
+		{
+			console.log('AI Draws a Referee card');
+		}
 	},
 
 	SearchCard: function(type){
@@ -235,18 +241,30 @@ game.createClass('AI', {
 			/* note, we dont need if statement for Home/Away */
 			if((tmp = this.SearchCard(this.HomeLeftShot)) != null){
 				position = tmp;
-				console.log('Pick LeftShot(Home)');
+				if (Debug >= 2)
+				{
+					console.log('Pick LeftShot(Home)');
+				}
 			}else if((tmp = this.SearchCard(this.HomeRightShot)) != null){
 				position = tmp;
-				console.log('Pick RightShot(Home)');
+				if (Debug >= 2)
+				{
+					console.log('Pick RightShot(Home)');
+				}
 			}
 
 			if((tmp = this.SearchCard(this.AwayLeftShot)) != null){
 				position = tmp;
-				console.log('Pick LeftShot(Away)');
+				if (Debug >= 2)
+				{
+					console.log('Pick LeftShot(Away)');
+				}
 			}else if((tmp = this.SearchCard(this.AwayRightShot)) != null){
 				position = tmp;
-				console.log('Pick RightShot(Away)');
+				if (Debug >= 2)
+				{
+					console.log('Pick RightShot(Away)');
+				}
 			}
 			/*	If not, skip current if statement 
 			 *  and check if hold pass card
@@ -259,12 +277,18 @@ game.createClass('AI', {
 			 */
 			if((tmp = this.SearchCard(this.HomePass)) != null){
 				position = tmp;
-				console.log('Pick Pass(Home)');		
+				if (Debug >= 2)
+				{
+					console.log('Pick Pass(Home)');	
+				}
 			}
 
 			if((tmp = this.SearchCard(this.AwayPass)) != null){
 				position = tmp;
-				console.log('Pick Pass(Away)');	
+				if (Debug >= 2)
+				{
+					console.log('Pick Pass(Away)');	
+				}
 			}
 		}// else use card or leave position as null that we didnt use card
 
@@ -274,7 +298,10 @@ game.createClass('AI', {
 			 *  check if we can use the traded card immedietely
 			 *  if not, check referee later
 			 */
-			console.log('No Card To Use, try trade card!');
+			 if (Debug >= 2)
+			{
+				console.log('No Card To Use, try trade card!');
+			}
 			tmp = this.TradeCard();
 			if(this.cards[tmp] == 1 || this.cards[tmp] == 11){
 				position = tmp;
@@ -284,7 +311,10 @@ game.createClass('AI', {
 			{
 				position = tmp;
 			}else
+			if (Debug >= 2)
+			{
 				console.log('Still no card to use after trade card');
+			}
 		}
 
 		if(position != null){
@@ -308,24 +338,36 @@ game.createClass('AI', {
 		var tmp;
 		if((tmp = this.SearchCard(this.HomeIntercept)) != null){
 			position = tmp;
-			console.log('Pick Intercept(Home)');
+			if (Debug >= 2)
+			{
+				console.log('Pick Intercept(Home)');
+			}
 		}
 
 		if((tmp = this.SearchCard(this.AwayIntercept)) != null){
 			position = tmp;
-			console.log('Pick Intercept(Away)');
+			if (Debug >= 2)
+			{
+				console.log('Pick Intercept(Away)');
+			}
 		}
 
 		if(position == null){
 			/*	If AI dont hold intercept card, 
 			 *	trade card to see if AI can get it
 			 */
-			console.log('No Card To Use, try trade card!');
+			 if (Debug >= 2)
+			{
+				console.log('No Card To Use, try trade card!');
+			}
 			var tmp = this.TradeCard();
 			if(this.cards[tmp] == this.HomeIntercept || 
 			   this.cards[tmp] == this.AwayIntercept)
 			{
-				console.log('Succeed to trade and get intercept');
+				if (Debug >= 2)
+				{
+					console.log('Succeed to trade and get intercept');
+				}
 				position = tmp;
 			}
 		}
@@ -351,25 +393,37 @@ game.createClass('AI', {
 		if( PLP == this.HomeLeftShot &&
 			(tmp = this.SearchCard(this.AwayLeftBlock)) != null){
 			position = tmp;
-			console.log('Pick LeftBlock(Away)');
+			if (Debug >= 2)
+			{
+				console.log('Pick LeftBlock(Away)');
+			}
 		}
 
 		if( PLP == this.HomeRightShot &&
 			(tmp = this.SearchCard(this.AwayRightBlock)) != null){
 			position = tmp;
-			console.log('Pick RightBlock(Away)');
+			if (Debug >= 2)
+			{
+				console.log('Pick RightBlock(Away)');
+			}
 		}
 
 		if( PLP == this.AwayLeftShot &&
 			(tmp = this.SearchCard(this.HomeLeftBlock)) != null){
 			position = tmp;
-			console.log('Pick LeftBlock(Home)');
+			if (Debug >= 2)
+			{
+				console.log('Pick LeftBlock(Home)');
+			}
 		}
 
 		if( PLP == this.AwayRightShot &&
 			(tmp = this.SearchCard(this.HomeRightBlock)) != null){
 			position = tmp;
-			console.log('Pick RightBlock(Home)');
+			if (Debug >= 2)
+			{
+				console.log('Pick RightBlock(Home)');
+			}
 		}
 
 		if(position == null){
@@ -391,7 +445,10 @@ game.createClass('AI', {
 			this.useCard(position);
 		}else{
 			this.LastPick = null;
-			console.log('AI doesn\'t hold block card' );
+			if (Debug >= 2)
+			{
+				console.log('AI doesn\'t hold block card' );
+			}
 			/* since we are not able to block it,
 			 * Player will goal!!
 			 */
@@ -551,7 +608,10 @@ game.createClass('AI', {
 					break;
 				case 4: case 14:
 					if( die1 == 1 || die2 == 1 ){
-						console.log( 'AI fail intercerpt by rolling 1' );
+						if (Debug >= 3)
+						{
+							console.log( 'AI fail intercerpt by rolling 1' );
+						}
 					}else{
 						this.switchToOffence();
 						game.Player.switchToDeffence();
@@ -580,8 +640,11 @@ game.createClass('AI', {
 						}
 					});
 					break;
-				default: 
-					console.log('Unknown Type of Card');
+				default:
+					if (Debug >= 1)
+					{
+						console.log('Unknown Type of Card');
+					}
 					break;
 			}
 		}
@@ -589,7 +652,10 @@ game.createClass('AI', {
 	},
 
 	PassFail: function(i){
-		console.log('AI pass is blocked by rolling 1');
+		if (Debug >= 3)
+		{
+			console.log('AI pass is blocked by rolling 1');
+		}
 		this.switchToDeffence();
 		game.Player.switchToOffence();
 		game.chip.TurnOver();
@@ -598,7 +664,10 @@ game.createClass('AI', {
 	},
 
 	ShotFail: function(i){
-		console.log('AI shot! But didnt reach the end of zone!')
+		if (Debug >= 3)
+		{
+			console.log('AI shot! But didnt reach the end of zone!')
+		}
 		this.switchToDeffence();
 		game.Player.switchToOffence();
 		game.chip.TurnOver();
@@ -607,7 +676,10 @@ game.createClass('AI', {
 	},
 
 	PassToGoal: function(){
-		console.log('AI Pass To Goal');
+		if (Debug >= 3)
+		{
+			console.log('AI Pass To Goal');
+		}
 		this.GoalThisTurn = true;
 		game.gameround.PlayerGetLastGoal = false;
 		this.Score++;
@@ -615,7 +687,10 @@ game.createClass('AI', {
 	},
 
 	LostGoal: function(){
-		console.log('Player Shot To Goal');
+		if (Debug >= 3)
+		{
+			console.log('Player Shot To Goal');
+		}
 		this.LostGoalThisTurn = true;
 		game.gameround.PlayerGetLastGoal = true;
 		game.Player.Score++;

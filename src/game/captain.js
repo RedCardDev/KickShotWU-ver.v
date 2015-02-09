@@ -6,6 +6,8 @@ game.module(
 /*
  *	A player class will hold all the current infomation for this player
  */
+ 
+ var Debug = 3;
 game.createClass('Captain', {
 
 	Side: 'Home',	// default set player is home
@@ -40,7 +42,10 @@ game.createClass('Captain', {
  	phase: null,
 
 	init: function(HomeSide){
-		console.log('Current player side:' + HomeSide);
+		if (Debug >= 2)
+		{
+			console.log('Current player side:' + HomeSide);
+		}
 		if(HomeSide){
 			this.Side = 'Home';
 			this.phase = new game.BitmapText('Offence', {font: 'Foo'});
@@ -56,7 +61,10 @@ game.createClass('Captain', {
 		}
 		// testing
 		for(var i = 0; i < this.cards.length; i++){
-			console.log('Cards['+i+']: '+ this.cards[i]);
+			if (Debug >= 3)
+			{
+				console.log('Cards['+i+']: '+ this.cards[i]);
+			}
 		}
 
 		this.cardmenu = new game.CardMenu(this.cards);
@@ -141,13 +149,19 @@ game.createClass('Captain', {
 		this.cards[position] = type;
 
 		// testing
-			console.log();
-			console.log('Draw a new Card at: '+ position);
-			console.log('NewCard: '+ this.cards[position]);
-			console.log();
+			if (Debug >= 3)
+			{
+				console.log();
+				console.log('Draw a new Card at: '+ position);
+				console.log('NewCard: '+ this.cards[position]);
+				console.log();
+			}
 		// testing
 			for(var i = 0; i < this.cards.length; i++){
-				console.log('Cards['+i+']: '+ this.cards[i]);
+				if (Debug >= 3)
+				{
+					console.log('Cards['+i+']: '+ this.cards[i]);
+				}
 			}
 		return type;
 
@@ -202,10 +216,16 @@ game.createClass('Captain', {
 			this.LastPick = this.cards[i];
 			switch(this.cards[i]){
 				case 1: case 11:
-					console.log('Pass Ball By High die Roll');
+					if (Debug >= 3)
+					{
+						console.log('Pass Ball By High die Roll');
+					}
 					game.chip.moveChip( Math.max(die1, die2) );
 					if(die1 == 1 || die2 == 1){
-						console.log('Pass was blocked by rolling 1');
+						if (Debug >= 3)
+						{
+							console.log('Pass was blocked by rolling 1');
+						}
 						game.scene.addTimer(10, this.PassOrShotFail.bind(this, i) );
 					}else{
 						if(game.chip.chipzone == -11){
@@ -229,7 +249,10 @@ game.createClass('Captain', {
 				case 4: case 14:
 					console.log();
 					if( die1 == 1 || die2 == 1 ){
-						console.log( 'You fail intercerpt by rolling 1' );
+						if (Debug >= 3)
+						{
+							console.log( 'You fail intercerpt by rolling 1' );
+						}
 					}else{
 						this.switchToOffence();
 						game.AI.switchToDeffence();
@@ -260,8 +283,11 @@ game.createClass('Captain', {
 						}
 					});
 					break;
-				default: 
-					console.log('Unknown Type of Card');
+				default:
+					if (Debug >= 1)
+					{
+						console.log('Unknown Type of Card');
+					}
 					break;
 			}
 		}
@@ -278,7 +304,10 @@ game.createClass('Captain', {
 	// ======================================
 
 	PassToGoal: function(){
-		console.log('Player Pass To Goal');
+		if (Debug >= 2)
+		{
+			console.log('Player Pass To Goal');
+		}
 		this.GoalThisTurn = true;
 		this.Score++;
 		this.scoreText.setText('You: '+this.Score);
@@ -286,7 +315,10 @@ game.createClass('Captain', {
 	},
 
 	LostGoal: function(){
-		console.log('AI Shot To Goal');
+		if (Debug >= 2)
+		{
+			console.log('AI Shot To Goal');
+		}
 		this.LostGoalThisTurn = true;
 		game.AI.Score++;
 		game.AI.scoreText.setText(' AI: '+game.AI.Score);

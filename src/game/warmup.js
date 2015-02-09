@@ -27,7 +27,8 @@ var dice = null;
 
 var gameround = null;
 
-var SuperSpeed = 1;
+var SuperSpeed = 100;
+var Debug = 3;
 
 game.createScene('WarmUp', {
 
@@ -97,22 +98,22 @@ game.createScene('WarmUp', {
 		var tween1 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween1.to({x: 130}, 10);
+			tween1.to({x: 130}, 1000);
 		}
 		else
 		{
-			tween1.to({x: 130}, 1000);
+			tween1.to({x: 130}, 1000/SuperSpeed);
 		}
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween2.to({x: 800}, 10);
+			tween2.to({x: 800}, 1000);
 		}
 		else
 		{
-			tween2.to({x: 800}, 1000);
+			tween2.to({x: 800}, 1000/SuperSpeed);
 		}
 		tween2.easing(game.Tween.Easing.Back.In );
 		if (SuperSpeed == 1)
@@ -121,7 +122,7 @@ game.createScene('WarmUp', {
 		}
 		else
 		{
-			tween2.delay(20);
+			tween2.delay(20/SuperSpeed);
 		}
 
 		tween2.onComplete(this.PlayerRollSingleDice.bind(this));
@@ -141,20 +142,6 @@ game.createScene('WarmUp', {
 		game.dice.showsingle();
 		if (SuperSpeed == 1)
 		{
-			this.addTimer(10, function(){
-				game.dice.roll();
-				self.addTimer(10, function() {
-					game.dice.stopRoll();
-					self.SetDieValue(true);
-					self.addTimer(5, function(){
-						game.dice.hidesingle();
-						self.AIRollSingleDice();
-					});
-				});
-			});		
-		}
-		else
-		{
 			this.addTimer(1000, function(){
 				game.dice.roll();
 				self.addTimer(1000, function() {
@@ -167,29 +154,25 @@ game.createScene('WarmUp', {
 				});
 			});		
 		}
+		else
+		{
+			this.addTimer(1000/SuperSpeed, function(){
+				game.dice.roll();
+				self.addTimer(1000/SuperSpeed, function() {
+					game.dice.stopRoll();
+					self.SetDieValue(true);
+					self.addTimer(500/SuperSpeed, function(){
+						game.dice.hidesingle();
+						self.AIRollSingleDice();
+					});
+				});
+			});		
+		}
 	},
 
 	AIRollSingleDice: function(){
 		var self = this;
 		if (SuperSpeed == 1)
-		{
-			this.addTimer(10, function(){
-				game.dice.setAiPosition();
-				game.dice.showsingle();
-				self.addTimer(10,function(){
-					game.dice.roll();
-					self.addTimer(10, function() {
-						game.dice.stopRoll();
-						self.SetDieValue(false);
-						self.addTimer(5, function(){
-							game.dice.hidesingle();
-							self.HAResult();
-						});
-					});
-				});
-			});
-		}
-		else
 		{
 			this.addTimer(1000, function(){
 				game.dice.setAiPosition();
@@ -199,7 +182,25 @@ game.createScene('WarmUp', {
 					self.addTimer(1000, function() {
 						game.dice.stopRoll();
 						self.SetDieValue(false);
-						self.addTimer(50, function(){
+						self.addTimer(500, function(){
+							game.dice.hidesingle();
+							self.HAResult();
+						});
+					});
+				});
+			});
+		}
+		else
+		{
+			this.addTimer(1000/SuperSpeed, function(){
+				game.dice.setAiPosition();
+				game.dice.showsingle();
+				self.addTimer(1000/SuperSpeed,function(){
+					game.dice.roll();
+					self.addTimer(1000/SuperSpeed, function() {
+						game.dice.stopRoll();
+						self.SetDieValue(false);
+						self.addTimer(500/SuperSpeed, function(){
 							game.dice.hidesingle();
 							self.HAResult();
 						});
@@ -298,13 +299,25 @@ game.createClass('GameRound', {
 
 	Winner: function() {
 		if(game.Player.Score == 10 || game.Player.Score > game.AI.Score)
-			console.log('You Win!');
+			if (Debug >= 2)
+			{
+				console.log('You Win!');
+			}
 		else if(game.AI.Score == 10 || game.AI.Score > game.Player.Score)
-			console.log('You Lose!');
+			if (Debug >= 2)
+			{
+				console.log('You Lose!');
+			}
 		else if(game.AI.Score == game.Player.Score)
-			console.log('You some how managed to tie. This is bad.');
+			if (Debug >= 1)
+			{
+				console.log('You some how managed to tie. This is bad.');
+			}
 		else
-			console.log('Unknown Error for final Scores');
+			if (Debug >= 1)
+			{
+				console.log('Unknown Error for final Scores');
+			}
 
 		this.EndGame();
 	},
@@ -334,31 +347,31 @@ game.createClass('GameRound', {
 		var tween1 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween1.to({x: 150}, 6);
+			tween1.to({x: 150}, 600);
 		}
 		else
 		{
-			tween1.to({x: 150}, 600);
+			tween1.to({x: 150}, 600/SuperSpeed);
 		}
 		tween1.easing( game.Tween.Easing.Back.Out);
 
 		var tween2 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween2.to({x: 800}, 6);
+			tween2.to({x: 800}, 600);
 		}
 		else
 		{
-			tween2.to({x: 800}, 600);
+			tween2.to({x: 800}, 600/SuperSpeed);
 		}
 		tween2.easing(game.Tween.Easing.Back.In );
 		if (SuperSpeed == 1)
 		{
-			tween2.delay(20);
+			tween2.delay(2000);
 		}
 		else
 		{
-			tween2.delay(2000);
+			tween2.delay(2000/SuperSpeed);
 		}
 
 		tween1.chain(tween2);
@@ -386,27 +399,32 @@ game.createClass('GameRound', {
 		var text = new game.BitmapText('Your Turn', { font: 'Foo', align: 'center' });
 		text.position.set( -100, 600 );
 		text.addTo(game.scene.stage);
+		
+		if (Debug >= 2)
+		{
+			console.log('**********\n*\n* Your Turn\n*\n**********.');
+		}
 
 		var tween1 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween1.to({x: 150 }, 7);
+			tween1.to({x: 150 }, 700);
 		}
 		else
 		{
-			tween1.to({x: 150 }, 700);
+			tween1.to({x: 150 }, 700/SuperSpeed);
 		}
 
 		var tween2 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween2.to({x: 700 }, 7);
-			tween2.delay(7);
+			tween2.to({x: 700 }, 700);
+			tween2.delay(700);
 		}
 		else
 		{
-			tween2.to({x: 700 }, 700);
-			tween2.delay(700);
+			tween2.to({x: 700 }, 700/SuperSpeed);
+			tween2.delay(700/SuperSpeed);
 		}
 
 		tween2.onComplete(function(){
@@ -422,27 +440,32 @@ game.createClass('GameRound', {
 		var text = new game.BitmapText('AI\'s Turn', { font: 'Foo', align: 'center' });
 		text.position.set( -100, 300 );
 		text.addTo(game.scene.stage);
+		
+		if (Debug >= 2)
+		{
+			console.log('**********\n*\n* AI\'s Turn\n*\n**********.');
+		}
 
 		var tween1 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween1.to({x: 150 }, 7);
+			tween1.to({x: 150 }, 700);
 		}
 		else
 		{
-			tween1.to({x: 150 }, 700);
+			tween1.to({x: 150 }, 700/SuperSpeed);
 		}
 
 		var tween2 = new game.Tween(text.position);
 		if (SuperSpeed == 1)
 		{
-			tween2.to({x: 700 }, 7);
-			tween2.delay(7);
+			tween2.to({x: 700 }, 700);
+			tween2.delay(700);
 		}
 		else
 		{
-			tween2.to({x: 700 }, 700);
-			tween2.delay(700);
+			tween2.to({x: 700 }, 700/SuperSpeed);
+			tween2.delay(700/SuperSpeed);
 		}
 
 		tween2.onComplete(function(){

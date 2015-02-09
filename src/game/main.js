@@ -9,7 +9,8 @@ game.module(
 
 .body(function(){
 
-var SuperSpeed = 1;
+var SuperSpeed = 100;
+var Debug = 3;
 
 game.createScene('Main', {
 	backgroundColor: 0x629dc5,
@@ -44,15 +45,15 @@ game.createScene('Main', {
 
 		if (SuperSpeed == 1)
 		{
-			this.addTween(this.title, {y: 80}, 8, {delay: 1, easing: game.Tween.Easing.Back.Out}).start();
-			this.addTween(this.playButton, {x: game.system.width/2 - 150}, 8, {delay: 3, easing: game.Tween.Easing.Quadratic.Out}).start();
-			this.addTween(this.webButton, {x: game.system.width/2 + 150}, 8, {delay: 3, easing: game.Tween.Easing.Quadratic.Out}).start();
+			this.addTween(this.title, {y: 80}, 800, {delay: 100, easing: game.Tween.Easing.Back.Out}).start();
+			this.addTween(this.playButton, {x: game.system.width/2 - 150}, 800, {delay: 300, easing: game.Tween.Easing.Quadratic.Out}).start();
+			this.addTween(this.webButton, {x: game.system.width/2 + 150}, 800, {delay: 300, easing: game.Tween.Easing.Quadratic.Out}).start();
 		}
 		else 
 		{
-			this.addTween(this.title, {y: 80}, 800, {delay: 100, easing: game.Tween.Easing.Back.Out}).start();
-			this.addTween(this.playButton, {x: game.system.width/2 - 150}, 800, {delay: 300, easing: game.Tween.Easing.Quadratic.Out}).start();
-			this.addTween(this.webButton, {x: game.system.width/2 + 150}, 800, {delay: 300, easing: game.Tween.Easing.Quadratic.Out}).start();		
+			this.addTween(this.title, {y: 80}, 800/SuperSpeed, {delay: 100/SuperSpeed, easing: game.Tween.Easing.Back.Out}).start();
+			this.addTween(this.playButton, {x: game.system.width/2 - 150}, 800/SuperSpeed, {delay: 300/SuperSpeed, easing: game.Tween.Easing.Quadratic.Out}).start();
+			this.addTween(this.webButton, {x: game.system.width/2 + 150}, 800/SuperSpeed, {delay: 300/SuperSpeed, easing: game.Tween.Easing.Quadratic.Out}).start();		
 		}
         
         this.cycle = this.characters.shuffle();
@@ -64,25 +65,25 @@ game.createScene('Main', {
         game.tweenEngine.stopTweensForObject(this.charSprite);
 		if (SuperSpeed == 1)
 		{
-			this.addTween(this.charSprite, {x: -200}, 4, {delay: 1, easing: game.Tween.Easing.Back.In}).start();
-			this.addTween(this.title, {y: -this.title.height}, 4, {delay: 1, easing: game.Tween.Easing.Back.In}).start();
-			this.addTween(this.playButton, {x: -200}, 4,
-				{delay: 2, easing: game.Tween.Easing.Back.In,
-				onComplete: function() {
-					game.system.setScene('WarmUp');
-				}}).start();
-			this.addTween(this.webButton, {x: game.system.width + 200}, 4, {delay: 2, easing: game.Tween.Easing.Back.In}).start();	
-		}
-		else
-		{
 			this.addTween(this.charSprite, {x: -200}, 400, {delay: 100, easing: game.Tween.Easing.Back.In}).start();
 			this.addTween(this.title, {y: -this.title.height}, 400, {delay: 100, easing: game.Tween.Easing.Back.In}).start();
 			this.addTween(this.playButton, {x: -200}, 400,
-				{delay: 2, easing: game.Tween.Easing.Back.In,
+				{delay: 200, easing: game.Tween.Easing.Back.In,
 				onComplete: function() {
 					game.system.setScene('WarmUp');
 				}}).start();
-			this.addTween(this.webButton, {x: game.system.width + 200}, 400, {delay: 2, easing: game.Tween.Easing.Back.In}).start();
+			this.addTween(this.webButton, {x: game.system.width + 200}, 400, {delay: 200, easing: game.Tween.Easing.Back.In}).start();	
+		}
+		else
+		{
+			this.addTween(this.charSprite, {x: -200}, 400/SuperSpeed, {delay: 100/SuperSpeed, easing: game.Tween.Easing.Back.In}).start();
+			this.addTween(this.title, {y: -this.title.height}, 400/SuperSpeed, {delay: 100/SuperSpeed, easing: game.Tween.Easing.Back.In}).start();
+			this.addTween(this.playButton, {x: -200}, 400/SuperSpeed,
+				{delay: 200/SuperSpeed, easing: game.Tween.Easing.Back.In,
+				onComplete: function() {
+					game.system.setScene('WarmUp');
+				}}).start();
+			this.addTween(this.webButton, {x: game.system.width + 200}, 400/SuperSpeed, {delay: 200/SuperSpeed, easing: game.Tween.Easing.Back.In}).start();
 		}
         
     },
@@ -111,18 +112,18 @@ game.createScene('Main', {
         var self = this;
 		if (SuperSpeed == 1)
 		{
-			this.addTween(this.charSprite, {x: game.system.width / 2}, 6,
-				{delay:5, easing: game.Tween.Easing.Back.Out, onComplete: function() {
-					self.addTween(self.charSprite, {x: 800}, 6,
-						{delay:20, easing: game.Tween.Easing.Back.In, onComplete: self.nextCharacter.bind(self)}).start();
-				}}).start();
-		}
-		else
-		{
 			this.addTween(this.charSprite, {x: game.system.width / 2}, 600,
 				{delay:50, easing: game.Tween.Easing.Back.Out, onComplete: function() {
 					self.addTween(self.charSprite, {x: 800}, 600,
 						{delay:2050, easing: game.Tween.Easing.Back.In, onComplete: self.nextCharacter.bind(self)}).start();
+				}}).start();
+		}
+		else
+		{
+			this.addTween(this.charSprite, {x: game.system.width / 2}, 600/SuperSpeed,
+				{delay:50/SuperSpeed, easing: game.Tween.Easing.Back.Out, onComplete: function() {
+					self.addTween(self.charSprite, {x: 800}, 600/SuperSpeed,
+						{delay:2050/SuperSpeed, easing: game.Tween.Easing.Back.In, onComplete: self.nextCharacter.bind(self)}).start();
 				}}).start();
 		}
     }

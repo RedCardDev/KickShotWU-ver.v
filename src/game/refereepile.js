@@ -2,7 +2,9 @@ game.module(
 	'game.refereepile'
 )
 .body(function(){
-	
+
+var Debug = 3;
+
 game.createClass('RefereePile', {
 
 	pile: [],
@@ -23,7 +25,10 @@ game.createClass('RefereePile', {
 			this.NoDirectlyKick--;
 			return cardType;
 		}else{
-			console.log('Referee Pile Is Empty');
+			if (Debug >= 2)
+			{
+				console.log('Referee Pile Is Empty');
+			}
 			return null;
 		}
 	}

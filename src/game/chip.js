@@ -3,7 +3,8 @@ game.module(
 )
 .body(function(){
 
-var SuperSpeed = 1;
+var SuperSpeed = 100;
+var Debug = 3;
 
 game.createClass('Chip', {
 
@@ -70,8 +71,11 @@ game.createClass('Chip', {
 		}else{
 			console.log('Error: Unknown chip side!');
 		}
-		console.log('The chip was turned over');
-		console.log('Chip Side: '+this.Side);
+		if (Debug >= 2)
+		{
+			console.log('The chip was turned over');
+			console.log('Chip Side: '+this.Side);
+		}
 		
 	},
 
@@ -80,17 +84,26 @@ game.createClass('Chip', {
 		if(( PlayerIsHome  && !PlayerGetLastGoal) ||
 		    (!PlayerIsHome && PlayerGetLastGoal))
 		{
-			console.log('Set to HomeChip');
+			if (Debug >= 3)
+			{
+				console.log('Set to HomeChip');
+			}
 			this.Side = 'Home';
 			this.chip.setTexture('chip-home');
 		}else if((!PlayerIsHome && !PlayerGetLastGoal) || 
 			  	 ( PlayerIsHome &&  PlayerGetLastGoal))
 		{
-			console.log('Set To AwayChip');
+			if (Debug >= 3)
+			{
+				console.log('Set To AwayChip');
+			}
 			this.Side = 'Away';
 			this.chip.setTexture('chip-away');
 		}else{
-			console.log('Error: chip side error when resetchip()');
+			if (Debug >= 1)
+			{
+				console.log('Error: chip side error when resetchip()');
+			}
 		}
 		this.chip.position.set(320, 480);
 		this.chip.visible = true;
@@ -113,17 +126,20 @@ game.createClass('Chip', {
 		var Y_axis = this.chipY_axis[this.chipzone + 11].Y_axis;
 		if (SuperSpeed == 1)
 		{	
-			tween.to({y: Y_axis}, 5);
+			tween.to({y: Y_axis}, 500);
 		}
 		else
 		{	
-			tween.to({y: Y_axis}, 500);
+			tween.to({y: Y_axis}, 500/SuperSpeed);
 		}
 		tween.start();
 		
 
 		console.log();
-		console.log('Current Chip zone: '+this.chipzone);
+		if (Debug >= 3)
+		{
+			console.log('Current Chip zone: '+this.chipzone);
+		}
 	}
 
 });

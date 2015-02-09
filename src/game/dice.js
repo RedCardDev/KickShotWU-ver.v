@@ -2,7 +2,8 @@ game.module(
     'game.dice'
 ).body(function() {
 
-var SuperSpeed = 1;
+var SuperSpeed = 100;
+var Debug = 3;
 
 game.createClass('Dice', {
     rolling: false,
@@ -35,21 +36,24 @@ game.createClass('Dice', {
             }
 
             // Print the dice roll
-            console.log('value1: ' + this.value1);
-            console.log('value2: ' + this.value2);
-            console.log('sameRoll: ' + this.sameRoll);
+			if (Debug >= 2)
+			{
+				console.log('value1: ' + this.value1);
+				console.log('value2: ' + this.value2);
+				console.log('sameRoll: ' + this.sameRoll);
+			}
 
             this.die1.setTexture('dice' + this.value1);
             this.die2.setTexture('dice' + this.value2);
 			if (SuperSpeed == 1)
 			{
-				game.scene.addTimer(1, function() {
+				game.scene.addTimer(100, function() {
 					self.timing = false;
 				});
 			}
 			else
 			{
-				game.scene.addTimer(100, function() {
+				game.scene.addTimer(100/SuperSpeed, function() {
 					self.timing = false;
 				});
 			}
@@ -61,26 +65,26 @@ game.createClass('Dice', {
     showdue: function() {
 		if (SuperSpeed == 1)
 		{
-			game.scene.addTween(this.die1, {x: 100}, 5, { easing: game.Tween.Easing.Back.Out }).start();
-			game.scene.addTween(this.die2, {x: 100}, 5, { easing: game.Tween.Easing.Back.Out }).start();
+			game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
+			game.scene.addTween(this.die2, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
 		}
 		else
 		{
-			game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
-			game.scene.addTween(this.die2, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();
+			game.scene.addTween(this.die1, {x: 100}, 500/SuperSpeed, { easing: game.Tween.Easing.Back.Out }).start();
+			game.scene.addTween(this.die2, {x: 100}, 500/SuperSpeed, { easing: game.Tween.Easing.Back.Out }).start();
 		}
 	},
 
     hidedue: function() {
 		if (SuperSpeed == 1)
 		{
-			game.scene.addTween(this.die1, {x: -this.die1.width}, 5, { easing: game.Tween.Easing.Back.In }).start();
-			game.scene.addTween(this.die2, {x: -this.die2.width}, 5, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die2, {x: -this.die2.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
 		}
 		else
 		{
-			game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
-			game.scene.addTween(this.die2, {x: -this.die2.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 500/SuperSpeed, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die2, {x: -this.die2.width}, 500/SuperSpeed, { easing: game.Tween.Easing.Back.In }).start();
 		}
 		
 	},
@@ -90,22 +94,22 @@ game.createClass('Dice', {
     showsingle: function(){
 		if (SuperSpeed == 1)
 		{
-			game.scene.addTween(this.die1, {x: 100}, 5, { easing: game.Tween.Easing.Back.Out }).start();   
+			game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();   
 		}
 		else
 		{
-			game.scene.addTween(this.die1, {x: 100}, 500, { easing: game.Tween.Easing.Back.Out }).start();   
+			game.scene.addTween(this.die1, {x: 100}, 500/SuperSpeed, { easing: game.Tween.Easing.Back.Out }).start();   
 		}
     },
 
     hidesingle: function(){
 		if (SuperSpeed == 1)
 		{
-			game.scene.addTween(this.die1, {x: -this.die1.width}, 5, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
 		}
 		else
 		{
-			game.scene.addTween(this.die1, {x: -this.die1.width}, 500, { easing: game.Tween.Easing.Back.In }).start();
+			game.scene.addTween(this.die1, {x: -this.die1.width}, 500/SuperSpeed, { easing: game.Tween.Easing.Back.In }).start();
 		}
 	},
 

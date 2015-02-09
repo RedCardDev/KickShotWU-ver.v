@@ -2,8 +2,8 @@ game.module(
 	'game.cardmenu'
 ).body(function() {
 
-var SuperSpeed = 1;
-
+var SuperSpeed = 100;
+var Debug = 3;
 game.createClass('CardMenu', {
 	
 	cards: [
@@ -126,7 +126,10 @@ game.createClass('CardMenu', {
 				this.CardDes.setText('Must Use The Same Direction\nTo Block GoalShot\n\nRoll Dice\nAdvance The Ball\nBy Sum of Dices');
 				break;
 			default:
-				console.log('Update Error');
+				if (Debug >= 1)
+				{
+					console.log('Update Error');
+				}
 		}
 
 	},
@@ -255,7 +258,10 @@ game.createClass('CardMenu', {
 				name = 'RightBlock_away';
 				break;
 			default:
-				console.log('Unknown cardType in iniSprite - cardmenu.js');
+				if (Debug >= 1)
+				{
+					console.log('Unknown cardType in iniSprite - cardmenu.js');
+				}
 				break;
 		}
 
@@ -286,16 +292,16 @@ game.createClass('CardMenu', {
 		if (SuperSpeed == 1)
 		{
 			var tween2 = new game.Tween(this.cards[this.select].sprite.position);
-			tween2.to( {x: 140 }, 5);
+			tween2.to( {x: 140 }, 500);
 			var zoom2 = new game.Tween(this.cards[this.select].sprite.scale);
-			zoom2.to( {x: 0.2, y: 0.2 }, 5);
+			zoom2.to( {x: 0.2, y: 0.2 }, 500);
 		}
 		else
 		{
 			var tween2 = new game.Tween(this.cards[this.select].sprite.position);
-			tween2.to( {x: 140 }, 500);
+			tween2.to( {x: 140 }, 500/SuperSpeed);
 			var zoom2 = new game.Tween(this.cards[this.select].sprite.scale);
-			zoom2.to( {x: 0.2, y: 0.2 }, 500);
+			zoom2.to( {x: 0.2, y: 0.2 }, 500/SuperSpeed);
 		}
 		
     	tweenGroup.add(tween2);
@@ -305,16 +311,16 @@ game.createClass('CardMenu', {
 		if (SuperSpeed == 1)
 		{
 			var tween3 = new game.Tween(this.cards[this.select+1].sprite.position);
-			tween3.to( {x: 320 }, 5);
+			tween3.to( {x: 320 }, 500);
 			var zoom3 = new game.Tween(this.cards[this.select+1].sprite.scale);
-			zoom3.to( {x: 0.4, y: 0.4 }, 5);
+			zoom3.to( {x: 0.4, y: 0.4 }, 500);
 		}
 		else
 		{
 			var tween3 = new game.Tween(this.cards[this.select+1].sprite.position);
-			tween3.to( {x: 320 }, 500);
+			tween3.to( {x: 320 }, 500/SuperSpeed);
 			var zoom3 = new game.Tween(this.cards[this.select+1].sprite.scale);
-			zoom3.to( {x: 0.4, y: 0.4 }, 500);
+			zoom3.to( {x: 0.4, y: 0.4 }, 500/SuperSpeed);
 		}
     	tweenGroup.add(tween3);
     	tweenGroup.add(zoom3);
@@ -324,7 +330,7 @@ game.createClass('CardMenu', {
 		{
 			if(this.select != this.cards.length-2){
 				var zoom4 = new game.Tween(this.cards[this.select+2].sprite.scale);
-				zoom4.to( {x: 0.2, y: 0.2 }, 5);
+				zoom4.to( {x: 0.2, y: 0.2 }, 500);
 				tweenGroup.add(zoom4);    		
 			}   	
     	}
@@ -332,7 +338,7 @@ game.createClass('CardMenu', {
 		{
 			if(this.select != this.cards.length-2){
 				var zoom4 = new game.Tween(this.cards[this.select+2].sprite.scale);
-				zoom4.to( {x: 0.2, y: 0.2 }, 5);
+				zoom4.to( {x: 0.2, y: 0.2 }, 500/SuperSpeed);
 				tweenGroup.add(zoom4);    		
 			}   	
     	}

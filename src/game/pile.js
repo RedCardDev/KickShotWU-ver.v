@@ -3,7 +3,7 @@ game.module(
 ).
 body(function() {
 
-
+var Debug = 3;
 game.createClass('Pile', {
 	/* 17 pass cards
 	 * 5 left/right goal shot cards
@@ -32,7 +32,10 @@ game.createClass('Pile', {
 				this.AwayPile(c_gone);
 				break;
 			default:
-				console.log('Unknown pile type');
+				if (Debug >= 1)
+				{		
+					console.log('Unknown pile type');
+				}
 				break;
 		}
 
@@ -53,7 +56,10 @@ game.createClass('Pile', {
 				case 5: this.NoLeftBlock--; break;
 				case 6: this.NoRightBlock--; break;
 				default:
-					console.log('Undefined card type in cards has been taken away');
+					if (Debug >= 1)
+					{
+						console.log('Undefined card type in cards has been taken away');
+					}
 					break;
 			}
 		}
@@ -93,7 +99,10 @@ game.createClass('Pile', {
 				case 15: this.NoLeftBlock--; break;
 				case 16: this.NoRightBlock--; break;
 				default:
-					console.log('Undefined card type in cards has been taken away');
+					if (Debug >= 1)
+					{
+						console.log('Undefined card type in cards has been taken away');
+					}
 					break;
 			}
 		}
@@ -141,12 +150,15 @@ game.createClass('Pile', {
 				case 4: case 14: this.NoIntercept--; break;
 				case 5: case 15: this.NoLeftBlock--; break;
 				case 6: case 16: this.NoRightBlock--; break;
-				default: console.log('Unknown type of card when drawing'); break;
+				default: if (Debug >= 1){console.log('Unknown type of card when drawing');} break;
 			}
 			return cardtype;
 		}else{
-			console.log();
-			console.log('Pile is Empty now');
+			if (Debug >= 2)
+			{
+				console.log();
+				console.log('Pile is Empty now');
+			}
 			return null;
 		}
 	},
